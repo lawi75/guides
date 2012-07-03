@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App rating -->
+    <string name="rating">Betygsätt</string>
+    <string name="rating_message">Om du tycker om %1$s så skulle det vara väldigt uppskattat om du tog dig tid att betygsätta den på Google Play. Tack för hjälpen!</string>
+    <string name="later">Påminn mig senare</string>
+    <string name="nothanx">Nej tack</string>
+    
+</resources>
