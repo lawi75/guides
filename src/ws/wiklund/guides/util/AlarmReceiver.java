@@ -1,7 +1,5 @@
 package ws.wiklund.guides.util;
 
-import ws.wiklund.guides.R;
-import ws.wiklund.guides.model.Cellar;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,18 +15,20 @@ public class AlarmReceiver extends BroadcastReceiver {
 		Bundle extras=intent.getExtras();
 		String title=extras.getString("title");
 		String note=extras.getString("note");
-		Cellar cellar = (Cellar) extras.getSerializable("cellar");
+		//Cellar cellar = (Cellar) extras.getSerializable("cellar");
 		int id = extras.getInt("nextNotificationId");
 
 		NotificationManager manger = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = new Notification(R.drawable.icon, "Combi Note", SystemClock.elapsedRealtime());
+		
+		//TODO needs an icon
+		Notification notification = new Notification(0, "Combi Note", SystemClock.elapsedRealtime());
 		PendingIntent contentIntent = PendingIntent.getActivity(context, id, new Intent(context, AlarmReceiver.class), 0);
 	
 		notification.setLatestEventInfo(context, note, title, contentIntent);
 		notification.flags = Notification.FLAG_INSISTENT;
 		notification.defaults |= Notification.DEFAULT_SOUND;
 
-		cellar.setNotificationId(id);
+		//cellar.setNotificationId(id);
 		// The PendingIntent to launch our activity if the user selects this notification
 		manger.notify(id, notification);
 	}

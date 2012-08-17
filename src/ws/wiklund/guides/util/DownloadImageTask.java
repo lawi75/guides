@@ -29,7 +29,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 			Bitmap bitmap;
 			
 			try {
-				bitmap = BitmapFactory.decodeStream((InputStream) new URL(baseUrl + url[0]).getContent());
+				String u = url[0];
+				bitmap = BitmapFactory.decodeStream((InputStream) new URL(u.startsWith("/") || u.startsWith("?") ? baseUrl + u : u).getContent());
 				if (bitmap != null) {
 					return Bitmap.createScaledBitmap(bitmap, width, height, true);
 				}

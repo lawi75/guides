@@ -111,14 +111,22 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper {
 			+ "LEFT JOIN provider ON "
 			+ "beverage.provider_id = provider._id ";
 
-	public static final String SQL_SELECT_ALL_BEVERAGES = "SELECT "
-			+ BEVERAGE_COLUMNS
+	public static final String SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR = "SELECT "
+			+ BEVERAGE_COLUMNS + ", "
+			+ "ifnull(("
+				+ "SELECT "
+					+ "sum(no_bottles) AS tot "
+				+ "FROM "
+					+ CELLAR_TABLE + " "
+				+ "WHERE "
+					+ "beverage._id = cellar.beverage_id"
+				+ "), 0) AS total " 
 			+ "FROM "
 			+ BEVERAGE_TABLE + " "
 			+ BEVERAGE_JOIN_COLUMNS;
-	
+
 	private static final String SQL_SELECT_BEVERAGE = 
-			SQL_SELECT_ALL_BEVERAGES
+			SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR
 			+ "WHERE "
 			+ "beverage._id = ?";
 	
@@ -135,20 +143,6 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper {
 		+ "FROM "
 			+ CELLAR_TABLE + " ";
 	*/
-	
-	public static final String SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR = "SELECT "
-			+ BEVERAGE_COLUMNS + ", "
-			+ "ifnull(("
-				+ "SELECT "
-					+ "sum(no_bottles) AS tot "
-				+ "FROM "
-					+ CELLAR_TABLE + " "
-				+ "WHERE "
-					+ "beverage._id = cellar.beverage_id"
-				+ "), 0) AS total " 
-			+ "FROM "
-			+ BEVERAGE_TABLE + " "
-			+ BEVERAGE_JOIN_COLUMNS;
 	
 	//Used for testing so that db can be created and dropped with out destroying dev data
 	public BeverageDatabaseHelper(Context context, String dbName, int dbVersion) {
@@ -679,6 +673,23 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper {
 		}
 		
 		return 0;
+	}
+
+	public List<Country> getCountries() {
+		List<Country> l = new ArrayList<Country>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			Cursor c = db.rawQuery("select * from " + COUNTRY_TABLE, null);
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(getCountryFromCursor(c));
+			}
+
+			return l;
+		} finally {
+			db.close();
+		}
 	}
 
 	// End Stats

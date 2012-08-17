@@ -1,5 +1,6 @@
 package ws.wiklund.guides.util;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -11,13 +12,18 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import ws.wiklund.guides.R;
 import ws.wiklund.guides.bolaget.SystembolagetParser;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
+import ws.wiklund.guides.model.Beverage;
 import ws.wiklund.guides.model.BeverageType;
 import ws.wiklund.guides.model.Country;
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ViewHelper {
 	private final static DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
@@ -29,6 +35,8 @@ public class ViewHelper {
 	private static List<String> strengths = new ArrayList<String>();
 	
 	private static int lightVersion = 1;
+	
+	private static final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "guides" + File.separator);
 	
 	static {
 		decimalFormat.setDecimalSeparatorAlwaysShown(true);
@@ -46,11 +54,15 @@ public class ViewHelper {
 	}
     
     public void setThumbFromUrl(ImageView view, String thumb) {
-		new DownloadImageTask(view, SystembolagetParser.BASE_URL, 50, 100).execute(thumb);
+    	if(thumb != null) {
+    		new DownloadImageTask(view, SystembolagetParser.BASE_URL, 50, 100).execute(thumb);
+    	}
 	}
 	
     public void setCountryThumbFromUrl(ImageView view, Country country) {
-		new DownloadImageTask(view, SystembolagetParser.BASE_URL, 29, 17).execute(country != null ? country.getThumbUrl() : null);
+		if (country != null && country.getThumbUrl() != null) {
+			new DownloadImageTask(view, SystembolagetParser.BASE_URL, 29, 17).execute(country != null ? country.getThumbUrl() : null);
+		}
 	}
     
 	public static String getDateAsString(Date date) {
@@ -121,6 +133,24 @@ public class ViewHelper {
 		urlBuilder.append(values.toString());
 
 		return urlBuilder.toString();
+	}
+	
+	public static boolean validateBeverage(Context c, Beverage b) {
+		String name = b.getName();
+		if(name == null || name.length() == 0) {
+			Toast.makeText(c, c.getString(R.string.missingName), Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static File getRoot() {
+		if(!root.exists()) {
+			root.mkdirs();
+		}		
+
+		return root;
 	}
 
 }

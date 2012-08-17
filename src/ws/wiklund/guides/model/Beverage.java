@@ -190,6 +190,79 @@ public class Beverage extends BaseModel {
 	public boolean hasBottlesInCellar() {
 		return bottlesInCellar > 0;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Beverage other = (Beverage) obj;
+		if (added == null) {
+			if (other.added != null)
+				return false;
+		} else if (!added.equals(other.added))
+			return false;
+		if (beverageTypeId != other.beverageTypeId)
+			return false;
+		if (bottlesInCellar != other.bottlesInCellar)
+			return false;
+		if (category == null) {
+			if (other.category != null)
+				return false;
+		} else if (!category.equals(other.category))
+			return false;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
+		if (country == null) {
+			if (other.country != null)
+				return false;
+		} else if (!country.equals(other.country))
+			return false;
+		if (no != other.no)
+			return false;
+		if (Double.doubleToLongBits(price) != Double
+				.doubleToLongBits(other.price))
+			return false;
+		if (producer == null) {
+			if (other.producer != null)
+				return false;
+		} else if (!producer.equals(other.producer))
+			return false;
+		if (provider == null) {
+			if (other.provider != null)
+				return false;
+		} else if (!provider.equals(other.provider))
+			return false;
+		if (Float.floatToIntBits(rating) != Float.floatToIntBits(other.rating))
+			return false;
+		if (Double.doubleToLongBits(strength) != Double
+				.doubleToLongBits(other.strength))
+			return false;
+		if (taste == null) {
+			if (other.taste != null)
+				return false;
+		} else if (!taste.equals(other.taste))
+			return false;
+		if (thumb == null) {
+			if (other.thumb != null)
+				return false;
+		} else if (!thumb.equals(other.thumb))
+			return false;
+		if (usage == null) {
+			if (other.usage != null)
+				return false;
+		} else if (!usage.equals(other.usage))
+			return false;
+		if (year != other.year)
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

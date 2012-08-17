@@ -1,9 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Add -->
+    <string name="systembolaget_no_hint">Systembolaget nr</string>
+    <string name="provideNo">Du måste ange ett nummer</string>
+    
     <!-- App rating -->
     <string name="rating">Betygsätt</string>
     <string name="rating_message">Om du tycker om %1$s så skulle det vara väldigt uppskattat om du tog dig tid att betygsätta den på Google Play. Tack för hjälpen!</string>
     <string name="later">Påminn mig senare</string>
     <string name="nothanx">Nej tack</string>
+
+    <!-- Exporting DB -->
+    <string name="exporting_db">Exporterar databasen\nPost %1$s av %2$s</string>
+    <string name="export_message">Vill du exportera din databas i CSV format till %1$s</string>        
     
+    <!-- Full add -->
+    <string name="skip">Hoppa över</string>
+    
+    <!-- FacebookPostMessageTask -->
+    <string name="recommend_wine">Jag har druckit </string>
+    <string name="recommend_wine1">som jag ger betyg</string>
+    <string name="recommend_wine2">av 5</string>
+    <string name="facebookPosted">Ditt dryckestips finns nu på Facebook</string>
+    
+    <!-- ViewHelper -->
+    <string name="missingName">Du måste ange ett namn</string> <!-- Modify Wine/Beer Activity-->
+    
+    <!-- BaseActvity -->
+    <string name="failedToStoreImage">Det gick inte att spara bilden till ditt SD kort</string>
+    
+    <!-- Beverage list menu-->
+    <string name="export">Exportera</string>
+    <string name="about">Om</string>
+    
+    <!-- Beverage list long click menu-->
+    <string name="deleteTitle">Ta bort</string>
+    <string name="deleteWine">Vill du ta bort %1$s både från listan och källaren?</string>
+    <string name="deleteFailed">Det gick inte att ta bort</string>
+    <string name="addToCellar">Lägg till i källaren</string>
+    <string name="removeFromCellar">Ta ut från källaren</string>
+    
+    <!-- Beverage -->
+    <string name="year">Årgång</string>
+    <string name="strength">Alkoholhalt</string>
+    <string name="price">Pris</string>
+    <string name="usage_hint">Passar till</string>
+    <string name="taste_hint">Smak</string>
+    <string name="producer_hint">Producent</string>
+    <string name="provider_hint">Leverantör</string>
+    <string name="category">Kategori</string>
+    <string name="comment_hint">Kommentar</string>    
+    <string name="bottles_in_cellar">%1$s flaskor i källaren till ett värde av %2$s</string>
+    <string name="rate">Betyg</string>
+    
+    <!-- Beverage menu -->
+    <string name="share_on_facebook">Dela</string>
+    <string name="rating">Betygsätt</string>
+    <string name="change">Ändra</string>
+    
+    <!-- Modify beverage menu -->
+    <string name="save">Spara</string>
+    
+    <!-- About -->
+    <string name="app_by">by lawi75</string>
+    <string name="aboutIcons">Information som visas gällande viner kommer från www.systembolaget.se. Min vinlista har ingen relation till Systembolaget och Systembolaget har inget ansvar för någon information som visas på Min vinlista. All beställning, köp och utlämning sker från/av/hos Systembolaget.\n\n\nIkonerna som Min vinlista använder sig av kommer från:</string>
+    <string name="aboutOxygen">www.oxygen-icons.org</string>
+    <string name="aboutVisualpharm">www.visualpharm.com</string>
+    <string name="systembolaget">www.systembolaget.se</string>
+    <string name="app_version">Version:</string>
+
+    <!-- Stats -->
+    <string name="stats">Statistik</string> <!-- Also used from Beverage list menu -->
+    <string name="cellarStatsNow">Just nu finns det %1$s flaskor i källaren till ett värde av %2$s</string>
+    <string name="amount">%1$s st</string>
+    
+    <!-- Error Messages -->
+    <string name="genericParseError">Misslyckades med att hämta information från www.systembolaget.se, var god försök igen</string>
+    <string name="missingNoError">Nummer %1$s finns inte hos Systembolaget</string>
+    <string name="invalidNoError">%1$s är inte ett giltigt nummer</string>
+    
+    <!-- Whats new -->
+    <string name="whatsnew">Nyheter</string>
+    
+    <!-- Categories -->
+    <!-- 
+        <string name="newStr">Ny...</string>
+    
+    
+     -->
 </resources>

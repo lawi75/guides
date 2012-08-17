@@ -22,5 +22,10 @@ public class Country extends BaseModel {
 	public String getThumbUrl() {
 		return thumbUrl;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 	
 }
