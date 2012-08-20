@@ -35,7 +35,7 @@
     
     <!-- Beverage list long click menu-->
     <string name="deleteTitle">Ta bort</string>
-    <string name="deleteWine">Vill du ta bort %1$s både från listan och källaren?</string>
+    <string name="deleteBeverage">Vill du ta bort %1$s både från listan och källaren?</string>
     <string name="deleteFailed">Det gick inte att ta bort</string>
     <string name="addToCellar">Lägg till i källaren</string>
     <string name="removeFromCellar">Ta ut från källaren</string>
@@ -71,6 +71,7 @@
 
     <!-- Stats -->
     <string name="stats">Statistik</string> <!-- Also used from Beverage list menu -->
+    <string name="statsNow">Det finns %1$s olika flaskor i listan med ett snittbetyg på %2$s stjärnor</string>
     <string name="cellarStatsNow">Just nu finns det %1$s flaskor i källaren till ett värde av %2$s</string>
     <string name="amount">%1$s st</string>
     
@@ -81,6 +82,9 @@
     
     <!-- Whats new -->
     <string name="whatsnew">Nyheter</string>
+    
+    <!-- GetBeverageFromCursorTask -->
+    <string name="wait">Vänligen vänta...</string>
     
     <!-- Categories -->
     <!-- 

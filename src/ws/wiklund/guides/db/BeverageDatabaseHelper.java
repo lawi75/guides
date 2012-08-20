@@ -1,5 +1,6 @@
 package ws.wiklund.guides.db;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper {
+public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements Serializable {
+	private static final long serialVersionUID = 6561035045955612957L;
 	// Database tables
 	private static final String COUNTRY_TABLE = "country";
 	private static final String PRODUCER_TABLE = "producer"; 
