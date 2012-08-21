@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ws.wiklund.guides.model.BaseModel;
+import ws.wiklund.guides.model.Beverage;
+import ws.wiklund.guides.model.BeverageType;
 import ws.wiklund.guides.model.Category;
 import ws.wiklund.guides.model.Column;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
 import ws.wiklund.guides.model.TableName;
-import ws.wiklund.guides.model.Beverage;
-import ws.wiklund.guides.model.BeverageType;
+import ws.wiklund.guides.util.ViewHelper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -185,7 +185,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			c = db.rawQuery(SQL_SELECT_BEVERAGE, new String[] {String.valueOf(id)});
 
 			if (c.moveToFirst()) {
-				return getBeverageFromCursor(c);
+				return ViewHelper.getBeverageFromCursor(c);
 			}
 		} finally {
 			c.close();
@@ -223,7 +223,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			Cursor c = db.rawQuery(SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR, null);
 			
 			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
-				l.add(getBeverageFromCursor(c));
+				l.add(ViewHelper.getBeverageFromCursor(c));
 			}
 
 			return l;
@@ -321,28 +321,6 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		}
 
 		return beverage;
-	}
-	
-	public Beverage getBeverageFromCursor(Cursor c) {
-		int i = 0;
-		return new Beverage(c.getInt(i++),
-				c.getString(i++),
-				c.getInt(i++),
-				c.getInt(i++),
-				c.getString(i++),
-				new Country(c.getInt(i++), c.getString(i++), c.getString(i++)),
-				c.getInt(i++),
-				new Producer(c.getInt(i++), c.getString(i++)),
-				c.getFloat(i++),
-				c.getFloat(i++),
-				c.getString(i++),
-				c.getString(i++),
-				new Provider(c.getInt(i++), c.getString(i++)),
-				c.getFloat(i++),
-				c.getString(i++),
-				new Category(c.getInt(i++), c.getString(i++)),
-				new Date(c.getLong(i++)),
-				c.getInt(i++));
 	}
 	
 	public int getBeverageIdFromNo(int no) {

@@ -1,7 +1,6 @@
 package ws.wiklund.guides.util;
 
 import ws.wiklund.guides.R;
-import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -12,21 +11,19 @@ import android.os.AsyncTask;
 public class GetBeverageFromCursorTask extends AsyncTask<Cursor, Void, Beverage> {
 	private ProgressDialog dialog;
 	private Activity activity;
-	private BeverageDatabaseHelper helper;
 	
 	@SuppressWarnings("rawtypes")
 	private Class activityClass;
 
 	@SuppressWarnings("rawtypes")
-	public GetBeverageFromCursorTask(Activity activity, BeverageDatabaseHelper helper, Class activityClass) {
+	public GetBeverageFromCursorTask(Activity activity, Class activityClass) {
 		this.activity = activity;
-		this.helper = helper;
 		this.activityClass = activityClass;
 	}
 
 	@Override
 	protected Beverage doInBackground(Cursor... cursors) {
-		return helper.getBeverageFromCursor(cursors[0]);
+		return ViewHelper.getBeverageFromCursor(cursors[0]);
 	}
 
 	@Override

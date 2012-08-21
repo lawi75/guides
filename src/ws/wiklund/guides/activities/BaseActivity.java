@@ -45,7 +45,6 @@ public class BaseActivity extends Activity {
 	
 	private static Set<Category> categories = new HashSet<Category>();
 
-	protected ViewHelper viewHelper;
 	protected Bitmap bitmap;
 	protected Country country;
 
@@ -54,8 +53,6 @@ public class BaseActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
-		viewHelper = new ViewHelper();
-		
 		/*if (!isLightVersion()) {
 			View ad = findViewById(R.id.adView);
 			if(ad != null) {
@@ -127,7 +124,7 @@ public class BaseActivity extends Activity {
 	}
 	
     protected boolean isLightVersion() {
-    	return viewHelper.isLightVersion(Integer.valueOf(getString(R.string.version_type)));
+    	return ViewHelper.isLightVersion(Integer.valueOf(getString(R.string.version_type)));
     }
     
 	protected synchronized Set<Category> getCategories() {
