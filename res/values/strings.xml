@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Add -->
+    <!-- Temporary placeholders, must be overriden in app -->
+    <string name="app_name" />
+    <string name="recommend_header" />
+    <string name="manually_add_beverage" />
+    <string name="exist" />
+    <string name="facebookAppId" />
+    <string name="play_url" />
+    <string name="versionHeads" />
+    <string name="versionMessages" />
+    
+    <!-- CustomListActivity -->
+    <string name="sort_list">Sortera listen</string>
+    <string name="sortOnName">Namn</string>
+    <string name="sortOnRank">Betyg</string>
+    <string name="sortOnType" />
+    <string name="sortOnNameSub">Sortera på namn</string>
+    <string name="sortOnRankSub">Sortera på Betyg</string>
+    <string name="sortOnTypeSub" />
+    
+    <!-- Add / Modify -->
     <string name="systembolaget_no_hint">Systembolaget nr</string>
     <string name="provideNo">Du måste ange ett nummer</string>
+    <string name="name_hint">Namn</string>
+    <string name="country_hint">Land</string>
+    <string name="systembolaget_wait_msg">Söker efter %1$s</string>
     
     <!-- App rating -->
     <string name="rating">Betygsätt</string>
@@ -28,6 +50,11 @@
     
     <!-- BaseActvity -->
     <string name="failedToStoreImage">Det gick inte att spara bilden till ditt SD kort</string>
+
+    <!-- Beverage list -->
+    <string name="importTitle">Importera</string>
+    <string name="importMessage">Vill du importera din databas från Vinguiden eller starta med en tom databas?</string>
+    <string name="empty">Tom</string>
     
     <!-- Beverage list menu-->
     <string name="export">Exportera</string>
@@ -38,7 +65,8 @@
     <string name="deleteBeverage">Vill du ta bort %1$s både från listan och källaren?</string>
     <string name="deleteFailed">Det gick inte att ta bort</string>
     <string name="addToCellar">Lägg till i källaren</string>
-    <string name="removeFromCellar">Ta ut från källaren</string>
+    <string name="goToCellar">Öppna min källaren</string>
+    <string name="removeFromCellar">Ta ut äldsta flaskan från källaren</string>
     
     <!-- Beverage -->
     <string name="year">Årgång</string>
@@ -63,7 +91,7 @@
     
     <!-- About -->
     <string name="app_by">by lawi75</string>
-    <string name="aboutIcons">Information som visas gällande viner kommer från www.systembolaget.se. Min vinlista har ingen relation till Systembolaget och Systembolaget har inget ansvar för någon information som visas på Min vinlista. All beställning, köp och utlämning sker från/av/hos Systembolaget.\n\n\nIkonerna som Min vinlista använder sig av kommer från:</string>
+    <string name="aboutIcons">Information som visas gällande drycker kommer från www.systembolaget.se. Denna guide har ingen relation till Systembolaget och Systembolaget har inget ansvar för någon information som visas i denna guide. All beställning, köp och utlämning sker från/av/hos Systembolaget.\n\n\nIkonerna som denna guide använder sig av kommer från:</string>
     <string name="aboutOxygen">www.oxygen-icons.org</string>
     <string name="aboutVisualpharm">www.visualpharm.com</string>
     <string name="systembolaget">www.systembolaget.se</string>
@@ -83,8 +111,12 @@
     <!-- Whats new -->
     <string name="whatsnew">Nyheter</string>
     
-    <!-- GetBeverageFromCursorTask -->
+    <!-- Title in all dialogs -->
     <string name="wait">Vänligen vänta...</string>
+    
+    <!-- GetBeverageFromCursorTask -->
+    <string name="fetch_beverage">Hämtar vald dryck</string>
+    
     
     <!-- Categories -->
     <!-- 

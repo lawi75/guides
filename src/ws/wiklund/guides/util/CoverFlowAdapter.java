@@ -2,7 +2,6 @@ package ws.wiklund.guides.util;
 
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
-import ws.wiklund.guides.model.BeverageTypes;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,16 +12,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class CoverFlowAdapter extends BaseAdapter {
-	private BeverageDatabaseHelper helper;
-	private BeverageTypes types;
-
 	private LayoutInflater inflator;
-	private SQLiteDatabase db;
-	private Cursor cursor;
 
-	public CoverFlowAdapter(Context c, BeverageDatabaseHelper helper, BeverageTypes types) {
+	protected BeverageDatabaseHelper helper;
+	protected SQLiteDatabase db;
+	protected Cursor cursor;
+
+	public CoverFlowAdapter(Context c, BeverageDatabaseHelper helper) {
 		this.helper = helper;
-		this.types = types;
 		
 		inflator = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
 		
@@ -70,10 +67,10 @@ public class CoverFlowAdapter extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		return ViewHelper.getView(inflator, R.layout.coveritem, convertView, getItem(position), types);
+		return ViewHelper.getView(inflator, R.layout.coveritem, convertView, getItem(position));
 	}
 
-	private Cursor getNewOrReuseCursor() {
+	protected Cursor getNewOrReuseCursor() {
 		if (db == null || !db.isOpen()) {
 			db = helper.getReadableDatabase();
 			cursor = db.rawQuery(BeverageDatabaseHelper.SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR, null);

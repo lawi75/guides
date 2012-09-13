@@ -45,7 +45,7 @@ public class AppRater {
     }   
     
     public static void showRateDialog(final Context context, final SharedPreferences.Editor editor, String appName, final String uri) {
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, R.style.CustomDialog);
         
         dialog.setTitle(context.getString(R.string.rating) + " " + appName);
 
@@ -53,6 +53,7 @@ public class AppRater {
         ll.setOrientation(LinearLayout.VERTICAL);
         
         TextView tv = new TextView(context);
+        tv.setTextColor(context.getResources().getColor(android.R.color.white));
         tv.setText(String.format(context.getString(R.string.rating_message), appName));
         tv.setWidth(240);
         tv.setPadding(4, 0, 4, 10);

@@ -2,12 +2,14 @@ package ws.wiklund.guides.model;
 
 import java.util.Date;
 
+import android.content.ContentValues;
+
 @TableName(name = "beverage")
 public class Beverage extends BaseModel {
 	private static final long serialVersionUID = 8130320547884807505L;
 	
 	private int no = -1;
-	private int beverageTypeId;
+	private BeverageType beverageType;
 	private String thumb;
 	private Country country;
 	private int year = -1;
@@ -26,19 +28,25 @@ public class Beverage extends BaseModel {
 	public Beverage() {
 		this(null);
 	}
-	
+
 	public Beverage(String name) {
 		super(name);
 	}
 
-	public Beverage(int id, String name, int no, int beverageTypeId, String thumb,
+	public Beverage(int id, String name, int no, BeverageType beverageType, String thumb,
 			Country country, int year, Producer producer, double strength, double price,
 			String usage, String taste, Provider provider, float rating, String comment, 
 			Category category, Date added, int bottlesInCellar) {
 		super(id, name);
 		
 		this.no = no;
-		this.beverageTypeId = beverageTypeId;
+		
+		if(beverageType.isOther()) {
+			this.beverageType = BeverageType.OTHER;
+		} else {
+			this.beverageType = beverageType;
+		}
+		
 		this.thumb = thumb;
 		this.country = country;
 		this.year = year;
@@ -63,12 +71,12 @@ public class Beverage extends BaseModel {
 		this.no = no;
 	}
 	
-	public int getBeverageTypeId() {
-		return beverageTypeId;
+	public BeverageType getBeverageType() {
+		return beverageType;
 	}
 
-	public void setBeverageTypeId(int beverageTypeId) {
-		this.beverageTypeId = beverageTypeId;
+	public void setBeverageType(BeverageType beverageType) {
+		this.beverageType = beverageType;
 	}
 
 	public String getThumb() {
@@ -191,6 +199,41 @@ public class Beverage extends BaseModel {
 		return bottlesInCellar > 0;
 	}
 	
+	public ContentValues getAsContentValues() {
+		ContentValues values = new ContentValues();
+
+		if(country != null && !country.isNew()) {
+			values.put("country_id", country.getId());  
+		}
+		
+		if(producer != null && !producer.isNew()) {
+			values.put("producer_id", producer.getId());  
+		}
+
+		if(provider != null && !provider.isNew()) {
+			values.put("provider_id", provider.getId());  
+		}
+		
+		if(category != null && !category.isNew()) {
+			values.put("category_id", category.getId());  
+		}
+
+		values.put("name", getName());  
+		values.put("no", no);  
+		values.put("thumb", thumb);
+		values.put("year", year);  
+		values.put("beverage_type_id", beverageType.getId());  
+		values.put("strength", strength);  
+		values.put("price", price);  
+		values.put("usage", usage);  
+		values.put("taste", taste);  
+		values.put("rating", rating); 
+		values.put("comment", comment); 
+		
+		return values;
+	}
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -205,7 +248,10 @@ public class Beverage extends BaseModel {
 				return false;
 		} else if (!added.equals(other.added))
 			return false;
-		if (beverageTypeId != other.beverageTypeId)
+		if (beverageType == null) {
+			if (other.beverageType != null)
+				return false;
+		} else if (!beverageType.equals(other.beverageType))
 			return false;
 		if (bottlesInCellar != other.bottlesInCellar)
 			return false;
@@ -263,15 +309,16 @@ public class Beverage extends BaseModel {
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "Beverage [no=" + no + ", beverageTypeId=" + beverageTypeId + ", thumb=" + thumb
-				+ ", country=" + country + ", year=" + year + ", producer="
-				+ producer + ", strength=" + strength + ", price=" + price
-				+ ", usage=" + usage + ", taste=" + taste + ", provider="
-				+ provider + ", rating=" + rating + ", added=" + added
-				+ ", comment=" + comment + ", category=" + category
+		return "Beverage [getId()=" + getId() + ", getName()=" + getName()
+				+ ", no=" + no + ", beverageType=" + beverageType
+				+ ", thumb=" + thumb + ", country=" + country + ", year="
+				+ year + ", producer=" + producer + ", strength=" + strength
+				+ ", price=" + price + ", usage=" + usage + ", taste=" + taste
+				+ ", provider=" + provider + ", rating=" + rating + ", added="
+				+ added + ", comment=" + comment + ", category=" + category
 				+ ", bottlesInCellar=" + bottlesInCellar + "]";
 	}
 

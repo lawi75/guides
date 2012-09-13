@@ -1,11 +1,19 @@
 package ws.wiklund.guides.util;
 
 public class Sortable {
+	public static final int ASC = 324;
+	public static final int DESC = 532;
+	
+	private static final String ASC_STRING = " asc";
+	private static final String DESC_STRING = " desc";
+
+	
 	private String header;
 	private String sub;
 	private int drawable;
 
 	private String sortColumn;
+	private int currentDirection = ASC;
 
 	public Sortable(String header, String sub, int drawable, String sortColumn) {
 		this.header = header;
@@ -27,7 +35,16 @@ public class Sortable {
 	}
 
 	public String getSortColumn() {
-		return sortColumn;
+		switch(currentDirection) {
+			case ASC:
+				currentDirection = DESC;
+				return sortColumn + ASC_STRING;
+			case DESC:
+				currentDirection = ASC;
+				return sortColumn + DESC_STRING;
+		}
+		
+		return sortColumn + ASC_STRING;
 	}
 
 	@Override

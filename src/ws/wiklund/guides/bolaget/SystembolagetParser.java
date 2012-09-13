@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import ws.wiklund.guides.util.ViewHelper;
-import ws.wiklund.guides.model.BeverageTypes;
+import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
@@ -27,8 +27,8 @@ public class SystembolagetParser {
 	private static final String SWEETNESS = "Sockerhalt";
 	
 
-	public static Beverage parseResponse(String no, BeverageTypes types) throws IOException {
-		Document doc = Jsoup.connect(BASE_URL + "/" + no).get();
+	public static Beverage parseResponse(String no, BeverageDatabaseHelper helper, boolean useSubTypes) throws IOException {
+		Document doc = Jsoup.connect(BASE_URL + "/" + no).timeout(10*1000).get();
 		
 		if(isValidResponse(doc)) {
 			Element productName = doc.select("span.produktnamnfet").first();
@@ -47,11 +47,10 @@ public class SystembolagetParser {
 			Beverage beverage = new Beverage(productName.text());
 			beverage.setNo(Integer.valueOf(no));
 			
-			if(types.useSubTypes()) {
-				beverage.setBeverageTypeId(types.findTypeFromString(typeIncludingSubType.text()).getId());
+			if(useSubTypes) {
+				beverage.setBeverageType(helper.getBeverageTypeFromName(typeIncludingSubType.text()));
 			} else {
-				beverage.setBeverageTypeId(types.findTypeFromString(type.text()).getId());
-				
+				beverage.setBeverageType(helper.getBeverageTypeFromName(type.text()));	
 			}
 
 			beverage.setCountry(new Country(country.attr("alt"),country.attr("src")));

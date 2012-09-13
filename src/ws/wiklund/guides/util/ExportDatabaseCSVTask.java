@@ -9,7 +9,7 @@ import java.util.List;
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
-import ws.wiklund.guides.model.BeverageTypes;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.SQLException;
@@ -19,6 +19,7 @@ import android.os.Message;
 import android.util.Log;
 import au.com.bytecode.opencsv.CSVWriter;
 
+@SuppressLint("HandlerLeak")
 public class ExportDatabaseCSVTask extends AsyncTask<Void, Void, Boolean> {
 	private Context context;
 	private BeverageDatabaseHelper helper;
@@ -27,16 +28,15 @@ public class ExportDatabaseCSVTask extends AsyncTask<Void, Void, Boolean> {
     private ProgressDialog dialog;
 	private int numberOfRecords;
 	private int currentRecords;
-	private BeverageTypes types;
 
-	public ExportDatabaseCSVTask(Context context, BeverageDatabaseHelper helper, File exportFile, int numberOfRecords, BeverageTypes types) {
+	public ExportDatabaseCSVTask(Context context, BeverageDatabaseHelper helper, File exportFile, int numberOfRecords) {
 		this.context = context;
 		this.helper = helper;
 		this.exportFile = exportFile;
 		this.numberOfRecords = numberOfRecords;
-		this.types = types;
 		
 		dialog = new ProgressDialog(context);
+		dialog.setTitle(context.getString(R.string.wait));
 		dialog.setMax(numberOfRecords);
 	}
 	
@@ -86,7 +86,7 @@ public class ExportDatabaseCSVTask extends AsyncTask<Void, Void, Boolean> {
                 String arrStr[] = {
                 		beverage.getName(),
                 		String.valueOf(beverage.getNo()),
-                		types.findTypeFromId(beverage.getBeverageTypeId()).getName(),
+                		beverage.getBeverageType().getName(),
                 		String.valueOf(beverage.getYear()),
                 		String.valueOf(beverage.getStrength()),
                 		beverage.getCountry().getName(),
@@ -125,7 +125,7 @@ public class ExportDatabaseCSVTask extends AsyncTask<Void, Void, Boolean> {
 	}
 
 	// handler for the background updating
-    Handler progressHandler = new Handler() {
+	Handler progressHandler = new Handler() {
         public void handleMessage(Message msg) {
             dialog.incrementProgressBy(1);
         }

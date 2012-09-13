@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.bolaget.SystembolagetParser;
+import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
-import ws.wiklund.guides.model.BeverageTypes;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,37 +14,42 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
+	private BeverageDatabaseHelper helper;
+	private Boolean useSubTasks;
 	private Activity activity;
 	
 	@SuppressWarnings("rawtypes")
 	private Class activityClass;
-	private BeverageTypes types;
 
 	private String no;
 	private String errorMsg;
 	
+	private long startRead = 0;
+	
 	private ProgressDialog dialog;
 
 	@SuppressWarnings("rawtypes")
-	public DownloadBeverageTask(Activity context, Class activityClass, BeverageTypes types) {
-		this.activity = context;
+	public DownloadBeverageTask(BeverageDatabaseHelper helper, Boolean useSubTasks, Activity activity, Class activityClass) {
+		this.helper = helper;
+		this.useSubTasks = useSubTasks;
+		this.activity = activity;
 		this.activityClass = activityClass;
-		this.types = types;
 	}
 
 	@Override
 	protected Beverage doInBackground(String... no) {
 		this.no = no[0];
 
-        try {
+		try {
 			if(this.no == null) {
 	        	Log.w(DownloadBeverageTask.class.getName(), "Failed to get info for wine,  no is null");		        	
 	        	errorMsg = activity.getString(R.string.genericParseError);
 			} else {
-				return SystembolagetParser.parseResponse(this.no, types);
+				startRead = System.currentTimeMillis();
+				return SystembolagetParser.parseResponse(this.no, helper, useSubTasks);
 			}
 		} catch (IOException e) {
-        	Log.w(DownloadBeverageTask.class.getName(), "Failed to get info for wine with no: " + this.no, e);
+        	Log.w(DownloadBeverageTask.class.getName(), "Failed to get info for wine with no: " + this.no + " after " + (System.currentTimeMillis() - startRead + " milli secs"), e);
         	errorMsg = activity.getString(R.string.genericParseError);
 		}
 
@@ -56,6 +61,8 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 		Intent intent = new Intent(activity, activityClass);
 
 		if (beverage != null) {
+			Log.d(DownloadBeverageTask.class.getName(), "Got beverage after " + (System.currentTimeMillis() - startRead) + " milli secs");
+			
 			intent.putExtra("ws.wiklund.guides.model.Beverage", beverage);
 			activity.startActivityForResult(intent, 0);
 		} else {
@@ -70,7 +77,8 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 	@Override
 	protected void onPreExecute() {
 		dialog = new ProgressDialog(activity, R.style.CustomDialog);
-		dialog.setMessage("Vänligen vänta...");
+		dialog.setTitle(activity.getString(R.string.wait));
+		dialog.setMessage(String.format(activity.getString(R.string.systembolaget_wait_msg), new Object[]{no}));
 		dialog.setIndeterminate(true);
 		dialog.setCancelable(false);
 		dialog.show();

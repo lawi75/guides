@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import ws.wiklund.guides.R;
-import ws.wiklund.guides.model.BeverageTypes;
 import ws.wiklund.guides.util.BitmapManager;
 import ws.wiklund.guides.util.ViewHelper;
 import android.content.Context;
@@ -24,13 +23,10 @@ public class BeverageListCursorAdapter extends SimpleCursorAdapter implements Se
 	private LayoutInflater inflator;
 	private Map<String, Integer> alphaIndexer;
 	private String[] sections;
-	private BeverageTypes types;
 
-	public BeverageListCursorAdapter(Context context, Cursor c, BeverageTypes types) {
+	public BeverageListCursorAdapter(Context context, Cursor c) {
 		super(context, R.layout.item, c, new String[] {"thumb", "name", "country_id", "year", "rating"}, new int[] {android.R.id.icon, android.R.id.text1});
 
-		this.types = types;
-		
 		alphaIndexer = new HashMap<String, Integer>();
 		
 		inflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -43,7 +39,7 @@ public class BeverageListCursorAdapter extends SimpleCursorAdapter implements Se
 		Cursor c = getCursor();
 		
 		if (c.moveToPosition(position)) {
-			convertView = ViewHelper.getView(inflator, R.layout.item, convertView, c, types);
+			convertView = ViewHelper.getView(inflator, R.layout.item, convertView, c);
 
 			alphaIndexer.put(ViewHelper.getBeverageFromCursor(c).getName().substring(0,1).toUpperCase(), position);
 			

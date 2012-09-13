@@ -28,25 +28,22 @@ public class GetBeverageFromCursorTask extends AsyncTask<Cursor, Void, Beverage>
 
 	@Override
 	protected void onPostExecute(Beverage bevarage) {
-		dialog.hide();
+		dialog.dismiss();
 
 		Intent intent = new Intent(activity, activityClass);
 		intent.putExtra("ws.wiklund.guides.model.Beverage", bevarage);
 
 		activity.startActivityForResult(intent, 0);
-
-		super.onPostExecute(bevarage);
 	}
 
 	@Override
 	protected void onPreExecute() {
 		dialog = new ProgressDialog(activity);
-		dialog.setMessage(activity.getString(R.string.wait));
+		dialog.setTitle(activity.getString(R.string.wait));
+		dialog.setMessage(activity.getString(R.string.fetch_beverage));
 		dialog.setIndeterminate(true);
 		dialog.setCancelable(false);
 		dialog.show();
-
-		super.onPreExecute();
 	}
 
 }

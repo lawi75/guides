@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"	
+	android:id="@+id/wine_list"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+   	<ws.wiklund.guides.util.MyAdView 
+		android:id="@+id/adView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		ads:adUnitId="@string/publisher_id"
+		ads:adSize="BANNER"
+		ads:loadAdOnCreate="false" />			 	    		    
+    
+    <ws.wiklund.guides.util.CoverFlow 
+	    android:id="@+id/coverFlow" 
+	    android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	
+   	<ws.wiklund.guides.util.MyAdView 
+		android:id="@+id/adView2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+        android:layout_gravity="center"
+		ads:adUnitId="@string/publisher_id"
+		ads:adSize="BANNER"
+		ads:loadAdOnCreate="false" />			 	    		    
+
+</LinearLayout>
+
+
+
+

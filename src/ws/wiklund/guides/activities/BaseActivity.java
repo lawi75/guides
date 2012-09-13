@@ -5,18 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
-import ws.wiklund.guides.model.Category;
 import ws.wiklund.guides.model.Country;
-import ws.wiklund.guides.util.PayPalFactory;
 import ws.wiklund.guides.util.ViewHelper;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,25 +20,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
-import android.widget.TableRow.LayoutParams;
 
-import com.paypal.android.MEP.CheckoutButton;
-import com.paypal.android.MEP.PayPal;
-
-public class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity {
 	protected static final int REQUEST_FROM_CAMERA = 432;
 	
-	private Calendar calendar = Calendar.getInstance();
-	private List<Integer> years = new ArrayList<Integer>();
-	
-	private static Set<Category> categories = new HashSet<Category>();
-
 	protected Bitmap bitmap;
 	protected Country country;
 
@@ -52,20 +36,14 @@ public class BaseActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	
-		/*if (!isLightVersion()) {
-			View ad = findViewById(R.id.adView);
-			if(ad != null) {
-				ad.setVisibility(View.GONE);
-			}
-			
-			View ad1 = findViewById(R.id.adView1);
-			if(ad1 != null) {
-				ad1.setVisibility(View.GONE);
-			}
-		}*/	
     }
     
+    @Override
+	protected void onStart() {
+    	super.onStart();
+		ViewHelper.handleAds(this);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_FROM_CAMERA && resultCode == RESULT_OK) {
@@ -122,70 +100,7 @@ public class BaseActivity extends Activity {
 		    }
 		});		
 	}
-	
-    protected boolean isLightVersion() {
-    	return ViewHelper.isLightVersion(Integer.valueOf(getString(R.string.version_type)));
-    }
-    
-	protected synchronized Set<Category> getCategories() {
-		if(categories.isEmpty()) {
-			categories.add(new Category(""));
-			//categories.add(new Category(Category.NEW_ID, getString(R.string.newStr)));
-		}
 		
-		/*List<Category> c = helper.getCategories();
-		
-		if (c != null && !c.isEmpty()) {
-			categories.addAll(c);
-		}*/
-		
-		//TODO possibility to remove categories
-		//TODO dialog if new is selected
-		
-		return categories;
-	}
-	
-	protected CheckoutButton getCheckoutButton() {
-		return getCheckoutButton(PayPal.BUTTON_152x33);
-	}
-	
-	protected CheckoutButton getCheckoutButton(int btnSize) {
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.span = 2;
-		params.topMargin = 10;
-		
-		PayPal payPal = PayPalFactory.getPayPal();
-		
-		CheckoutButton btn = null;
-		if (payPal != null) {
-			btn = payPal.getCheckoutButton(this, btnSize,
-					CheckoutButton.TEXT_DONATE);
-			btn.setLayoutParams(params);
-			btn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					donate();
-				}
-			});
-		}
-		
-		return btn;
-	}
-	
-	public int getCurrentYear() {
-		return calendar.get(Calendar.YEAR);
-	}
-	
-	public synchronized List<Integer> getYears() {
-		if(years.isEmpty()) {
-			for(int i = 1900; i<= calendar.get(Calendar.YEAR); i++) {
-				years.add(i);
-			}	
-		}
-		
-		return years;
-	}
-	
 	protected void saveBeverage(BeverageDatabaseHelper helper, Beverage b) {
 		if(country != null && country.getName().equals(b.getCountry().getName())) {
 			//Updated with an existing country
@@ -213,31 +128,4 @@ public class BaseActivity extends Activity {
 		return new File(ViewHelper.getRoot(), "beverage.tmp");
 	}	
 
-	private void donate() {
-		/*
-		NumberPickerDialog pickerDialog = new NumberPickerDialog(this, -1, 20, R.string.dialog_set_number, true);
-		pickerDialog.setTitle(getString(R.string.donateTitle));
-		pickerDialog.setOnNumberSetListener(new OnNumberSetListener() {
-			@Override
-			public void onNumberSet(int selectedNumber) {
-				PayPalPayment payment = new PayPalPayment();
-
-				payment.setSubtotal(new BigDecimal(selectedNumber));
-
-				payment.setCurrencyType("SEK");
-
-				payment.setRecipient("vinguiden@wiklund.ws");
-
-				payment.setPaymentType(PayPal.PAYMENT_TYPE_PERSONAL);
-
-				Intent checkoutIntent = PayPal.getInstance().checkout(payment, BaseActivity.this);
-
-				startActivityForResult(checkoutIntent, 1);					
-			}
-		});
-		
-		pickerDialog.show();
-		*/			
-    }
-	
 }

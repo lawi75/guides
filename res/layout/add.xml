@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"	
+	android:id="@+id/TableLayoutAddBeverage" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:stretchColumns="0"
+	android:background="@android:color/white">
+
+
+    <TableRow
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+		
+	   	<ws.wiklund.guides.util.MyAdView 
+			android:id="@+id/adView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+			ads:adUnitId="@string/publisher_id"
+			ads:adSize="BANNER"
+			ads:loadAdOnCreate="false" 
+			android:layout_span="2" />			 	    		    
+	</TableRow>
+    
+    <TableRow
+		android:id="@+id/TableRowAddBeverageByNo"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+		
+		<EditText 
+			android:id="@+id/EditNo"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"	
+			android:singleLine="true"
+			android:inputType="number"
+    		android:hint="@string/systembolaget_no_hint"/>
+		 
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+	        android:layout_marginTop="5dip"
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"
+			android:src="@drawable/next"
+			android:background="@drawable/custom_button2"			
+			android:onClick="searchWine" />
+	</TableRow>
+	
+	<TableRow
+		android:id="@+id/TableRowAddBeverageManually"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent">
+		
+		<Button
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+	        android:layout_marginTop="5dip"
+	        android:layout_marginRight="10dip"
+		    android:drawableRight="@drawable/next"
+		    android:text="@string/manually_add_beverage"
+			android:onClick="addBeverageManually" />
+	</TableRow>
+	
+    <TableRow
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+		
+	   	<ws.wiklund.guides.util.MyAdView 
+			android:id="@+id/adView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+			ads:adUnitId="@string/publisher_id"
+			ads:adSize="BANNER"
+			ads:loadAdOnCreate="false" 
+			android:layout_span="2" />			 	    		    
+	</TableRow>
+	
+</TableLayout>	    	
+     	
+
+
+

@@ -1,12 +1,11 @@
 package ws.wiklund.guides.activities;
 
 import ws.wiklund.guides.R;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
-public class FullAdActivity extends Activity {
+public class FullAdActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -21,5 +20,5 @@ public class FullAdActivity extends Activity {
     public void skip(View view) {    	
     	finish();
     }
-	
+
 }

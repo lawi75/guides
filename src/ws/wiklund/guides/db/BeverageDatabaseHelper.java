@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ws.wiklund.guides.model.BaseModel;
 import ws.wiklund.guides.model.Beverage;
 import ws.wiklund.guides.model.BeverageType;
 import ws.wiklund.guides.model.Category;
+import ws.wiklund.guides.model.Cellar;
 import ws.wiklund.guides.model.Column;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
@@ -19,6 +21,7 @@ import ws.wiklund.guides.util.ViewHelper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -30,8 +33,9 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 	private static final String PRODUCER_TABLE = "producer"; 
 	private static final String PROVIDER_TABLE = "provider";
 	private static final String CATEGORY_TABLE = "category";
-	
+
 	public static final String BEVERAGE_TABLE = "beverage";
+	public static final String BEVERAGE_TYPE_TABLE = "beverage_type";
 	public static final String CELLAR_TABLE = "cellar";	
 
 	// Database creation sql statements
@@ -41,7 +45,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ "thumb text, "
 			+ "country_id integer, "
 			+ "year integer, "
-			+ "type integer, "
+			+ "beverage_type_id integer, "
 			+ "producer_id integer, "
 			+ "strength float, "
 			+ "price float, "
@@ -53,9 +57,13 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ "category_id integer, "
 			+ "added timestamp not null default current_timestamp, "
 			+ "foreign key (country_id) references country (_id), "
+			+ "foreign key (beverage_type_id) references beverage_type (_id), "
 			+ "foreign key (producer_id) references producer (_id), "
 			+ "foreign key (producer_id) references producer (_id), "
 			+ "foreign key (category_id) references category (_id));"; 
+
+	public static final String DB_CREATE_BEVERAGE_TYPE = "create table " + BEVERAGE_TYPE_TABLE + " (_id integer primary key, "
+			+ "name text not null);";
 
 	private static final String DB_CREATE_COUNTRY = "create table " + COUNTRY_TABLE + " (_id integer primary key autoincrement, "
 			+ "name text not null, " 
@@ -80,11 +88,23 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ "notification_id integer, "
 			+ "foreign key (beverage_id) references beverage (_id));";
 
+
+	private static final String CELLAR_COLUMNS =
+			"cellar._id, "
+			+ "cellar.beverage_id, "
+			+ "cellar.no_bottles, "
+			+ "cellar.storage_location, "
+			+ "cellar.comment, "
+			+ "cellar.added_to_cellar, "
+			+ "cellar.consumption_date, "
+			+ "cellar.notification_id ";
+	
 	private static final String BEVERAGE_COLUMNS = 
 			"beverage._id, "
 			+ "beverage.name, "
 			+ "beverage.no, "
-			+ "beverage.type, "
+			+ "beverage.beverage_type_id, "
+			+ "beverage_type.name, "
 			+ "beverage.thumb, "
 			+ "beverage.country_id, "
 			+ "country.name, "
@@ -104,7 +124,9 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ "category.name, "
 			+ "(strftime('%s', added) * 1000) AS added ";
 
-	private static final String BEVERAGE_JOIN_COLUMNS = "LEFT JOIN country ON "
+	private static final String BEVERAGE_JOIN_COLUMNS = "LEFT JOIN beverage_type ON "
+			+ "beverage.beverage_type_id = beverage_type._id "
+			+ "LEFT JOIN country ON "
 			+ "beverage.country_id = country._id "
 			+ "LEFT JOIN producer ON "
 			+ "beverage.producer_id = producer._id "
@@ -113,7 +135,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ "LEFT JOIN provider ON "
 			+ "beverage.provider_id = provider._id ";
 
-	public static final String SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR = "SELECT "
+	public static final String SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR = "SELECT DISTINCT "
 			+ BEVERAGE_COLUMNS + ", "
 			+ "ifnull(("
 				+ "SELECT "
@@ -127,31 +149,35 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			+ BEVERAGE_TABLE + " "
 			+ BEVERAGE_JOIN_COLUMNS;
 
+	public static final String SQL_SELECT_ALL_BEVERAGES_IN_CELLAR = SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR
+			+ "LEFT JOIN cellar ON "
+			+ "beverage._id = cellar.beverage_id " 
+			+ "WHERE cellar.no_bottles > 0";
+	
+	public static final String SQL_SELECT_BEVERAGES_IN_CELLAR = "SELECT "
+					+ BEVERAGE_COLUMNS 
+					+ ", "
+					+ CELLAR_COLUMNS
+					+ "FROM "
+					+ BEVERAGE_TABLE + " "
+					+ BEVERAGE_JOIN_COLUMNS
+					+ "LEFT JOIN cellar ON "
+					+ "beverage._id = cellar.beverage_id " 
+					+ "WHERE "
+					+ "beverage._id = ?";
+	
 	private static final String SQL_SELECT_BEVERAGE = 
 			SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR
 			+ "WHERE "
 			+ "beverage._id = ?";
-	
-	/*
-	private static final String CELLAR_COLUMNS = 
-			"cellar._id, "
-			+ "cellar.beverage_id, "
-			+ "cellar.no_bottles, "
-			+ "cellar.storage_location, "
-			+ "cellar.comment, "
-			+ "cellar.added_to_cellar, "
-			+ "cellar.consumption_date, "
-			+ "cellar.notification_id "
-		+ "FROM "
-			+ CELLAR_TABLE + " ";
-	*/
+		
 	
 	//Used for testing so that db can be created and dropped with out destroying dev data
 	public BeverageDatabaseHelper(Context context, String dbName, int dbVersion) {
 		super(context, dbName, null, dbVersion);
 		
 		/*if((context.getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-			debugSetDBVersion(4);
+			debugSetDBVersion(1);
 		}*/
 	}
 
@@ -163,6 +189,8 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		db.execSQL(DB_CREATE_CATEGORY);
 		db.execSQL(DB_CREATE_BEVERAGE);
 		db.execSQL(DB_CREATE_CELLAR);
+		
+		getDatabaseUpgrader(db).createAndPopulateBeverageTypeTable(db);
 	}
 
 	@Override
@@ -231,12 +259,145 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			db.close();
 		}
 	}
+	
+	public List<Cellar> getAllActiveAlarms() {
+		List<Cellar> l = new ArrayList<Cellar>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			String sql = "select " + CELLAR_COLUMNS + "from " + CELLAR_TABLE +" where consumption_date > 0";
+			
+			Log.d(BeverageDatabaseHelper.class.getName(), "getAllActiveAlarms() SQL: " + sql);
+			
+			Cursor c = db.rawQuery(sql, null);
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(ViewHelper.getCellarFromCursor(c));
+			}
 
-	public List<Category> getCategories() {
-		// TODO Auto-generated method stub
-		return null;
+			return l;
+		} finally {
+			db.close();
+		}
 	}
 	
+
+	public List<Category> getCategories() {
+		List<Category> l = new ArrayList<Category>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			Cursor c = db.rawQuery("select _id, name from " + CATEGORY_TABLE, null);
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(getCategoryFromCursor(c));
+			}
+
+			return l;
+		} finally {
+			db.close();
+		}
+	}
+	
+	public BeverageType getBeverageTypeFromName(String name) {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = null;
+		
+		try {
+			c = db.rawQuery("select _id, name from " + BEVERAGE_TYPE_TABLE + " where name=?", new String[] {String.valueOf(name)});
+
+			if (c.moveToFirst()) {
+				return getBeverageTypeFromCursor(c);
+			}
+		} finally {
+			c.close();
+			db.close();
+			close();
+		}
+		
+		return BeverageType.OTHER;
+	}
+
+	public List<BeverageType> getAllBeverageTypes() {
+		List<BeverageType> l = new ArrayList<BeverageType>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			Cursor c = db.rawQuery("select _id, name from " + BEVERAGE_TYPE_TABLE, null);
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(getBeverageTypeFromCursor(c));
+			}
+
+			return l;
+		} finally {
+			db.close();
+		}
+	}
+	
+	public Cellar getOldestCellarItemForBeverage(int beverageId) {
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			String sql = "select " + CELLAR_COLUMNS + "from " + CELLAR_TABLE +" where beverage_id=? ORDER BY added_to_cellar";
+			
+			Log.d(BeverageDatabaseHelper.class.getName(), "getAllActiveAlarms() SQL: " + sql);
+			
+			Cursor c = db.rawQuery(sql, new String[]{String.valueOf(beverageId)});
+			
+			DatabaseUtils.dumpCursor(c);
+			
+			if(c.moveToFirst()) {
+				return ViewHelper.getCellarFromCursor(c);
+			}
+			
+			return null;
+		} finally {
+			db.close();
+		}
+		
+	}
+
+	public List<Cellar> getAllCellarsForBeverage(int beverageId) {
+		List<Cellar> l = new ArrayList<Cellar>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			String sql = "select " + CELLAR_COLUMNS + "from " + CELLAR_TABLE +" where beverage_id=?";
+			
+			Log.d(BeverageDatabaseHelper.class.getName(), "getAllActiveAlarms() SQL: " + sql);
+			
+			Cursor c = db.rawQuery(sql, new String[]{String.valueOf(beverageId)});
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(ViewHelper.getCellarFromCursor(c));
+			}
+
+			return l;
+		} finally {
+			db.close();
+		}
+	}
+	
+	public boolean deleteCellar(int id) {
+		SQLiteDatabase db = getWritableDatabase();
+
+		try {
+			db.beginTransaction();
+			
+			boolean b = true;
+			b = db.delete(CELLAR_TABLE, "_id=?", new String[] { String.valueOf(id) }) == 1;
+			if (b) {
+				db.setTransactionSuccessful();
+			}
+			
+			return b; 
+		} finally {
+			db.endTransaction();
+			db.close();
+			close();
+		}
+	}
 
 	public boolean deleteBeverage(int id) {
 		SQLiteDatabase db = getWritableDatabase();
@@ -279,7 +440,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			db.beginTransaction();
 
 			try {
-				ContentValues values = convertBeverageToValues(beverage);
+				ContentValues values = beverage.getAsContentValues();
 
 				//Add country if country doesn't exists in DB
 				Integer countryId = values.getAsInteger("country_id");
@@ -351,11 +512,20 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 	}
 
 	public int getNoBottlesInCellar() {
+		return getNoBottlesInCellarForWine(-1);
+	}
+	
+	public int getNoBottlesInCellarForWine(int id) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor c = null;
 		
 		try {
-			c = db.rawQuery("SELECT sum(no_bottles) as sum FROM cellar", null);
+			String sql = "SELECT sum(no_bottles) as sum FROM cellar";
+			if(id != -1) {
+				sql += " WHERE beverage_id = ?";
+			}
+			
+			c = db.rawQuery(sql, id != -1 ? new String[]{String.valueOf(id)} : null);
 
 			if (c.moveToFirst()) {
 				return c.getInt(0);
@@ -387,7 +557,135 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 			close();
 		}
 	}
+	
+	public Cellar addToOrUpdateCellar(Cellar cellar) {
+		SQLiteDatabase db = getWritableDatabase();
+		db.beginTransaction();
 
+		try {
+			if (cellar.isNew()) {
+				//TODO change to default time stamp in DB table in coming versions
+				cellar.setAddedToCellar(new Date());
+				ContentValues values = cellar.getAsContentValues();
+	
+				long id = db.insert(CELLAR_TABLE, null, values);
+				
+				//Update cellar with the newly created id
+				cellar.setId((int) id);
+				
+				db.setTransactionSuccessful();
+			} else {
+				ContentValues values = cellar.getAsContentValues();						
+				db.update(CELLAR_TABLE, values, "_id=?", new String[]{String.valueOf(cellar.getId())});
+
+				db.setTransactionSuccessful();
+			}
+		} finally {
+			db.endTransaction();
+			db.close();
+			close();
+		}
+		
+		return cellar;
+	}
+	
+	public boolean removeSchedule(Cellar cellar) {
+		SQLiteDatabase db = getWritableDatabase();
+		db.beginTransaction();
+
+		try {
+			cellar.setConsumptionDate(null);
+			ContentValues values = cellar.getAsContentValues();
+						
+			db.update(CELLAR_TABLE, values, "_id=?", new String[]{String.valueOf(cellar.getId())});
+
+			db.setTransactionSuccessful();
+			return true;		
+		} finally {
+			db.endTransaction();
+			db.close();
+			close();
+		}
+	}
+	
+	// Stats
+	public double getCellarValue() {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = null;
+		
+		try {
+			c = db.rawQuery(BeverageDatabaseHelper.SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR, null);
+
+			double value = 0;
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				value += c.getDouble(13) * c.getInt(23);
+			}
+
+			return value;
+		} finally {
+			c.close();
+			db.close();
+			close();
+		}
+	}
+
+	public double getAverageRating() {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = null;
+		
+		try {
+			c = db.rawQuery("select avg(rating) from beverage where rating != -1", null);
+
+			if (c.moveToFirst()) {
+				return c.getDouble(0);
+			}
+		} finally {
+			c.close();
+			db.close();
+			close();
+		}
+		
+		return 0;
+	}
+
+	public int getAllBeveragesForType(BeverageType type) {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor c = null;
+		
+		try {
+			c = db.rawQuery("select count(_id) from beverage where beverage_type_id = ?", new String[]{String.valueOf(type.getId())});
+
+			if (c.moveToFirst()) {
+				return c.getInt(0);
+			}
+		} finally {
+			c.close();
+			db.close();
+			close();
+		}
+		
+		return 0;
+	}
+
+	public List<Country> getCountries() {
+		List<Country> l = new ArrayList<Country>();
+		SQLiteDatabase db = getReadableDatabase();
+		
+		try {
+			Cursor c = db.rawQuery("select * from " + COUNTRY_TABLE, null);
+			
+			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
+				l.add(getCountryFromCursor(c));
+			}
+
+			return l;
+		} finally {
+			db.close();
+		}
+	}
+
+	// End Stats
+	
 	/**
 	 * Internal method with out check for duplicates
 	 * @param beverage
@@ -416,7 +714,13 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 				beverage.setProvider(new Provider(id, provider.getName()));
 			}
 			
-			ContentValues values = convertBeverageToValues(beverage);
+			Category category = beverage.getCategory();
+			if(category != null && category.isNew()) {
+				int id = addCategory(db, category);
+				beverage.setCategory(new Category(id, category.getName()));
+			}
+			
+			ContentValues values = beverage.getAsContentValues();
 						
 			db.update(BEVERAGE_TABLE, values, "_id=?", new String[]{String.valueOf(beverage.getId())});
 
@@ -429,8 +733,16 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		}
 	}
 
+	private Category getCategoryFromCursor(Cursor c) {
+		return new Category(c.getInt(0), c.getString(1));
+	}
+
 	private Country getCountryFromCursor(Cursor c) {
 		return new Country(c.getInt(0), c.getString(1), c.getString(2));
+	}
+	
+	private BeverageType getBeverageTypeFromCursor(Cursor c) {
+		return new BeverageType(c.getInt(0), c.getString(1));
 	}
 
 	private int addCountry(SQLiteDatabase db, Country country) {
@@ -520,44 +832,6 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		return true;
 	}
 
-	private ContentValues convertBeverageToValues(Beverage beverage) {
-		ContentValues values = new ContentValues();
-
-		Country country = beverage.getCountry();
-		if(country != null && !country.isNew()) {
-			values.put("country_id", country.getId());  
-		}
-		
-		Producer producer = beverage.getProducer();
-		if(producer != null && !producer.isNew()) {
-			values.put("producer_id", producer.getId());  
-		}
-
-		Provider provider = beverage.getProvider();
-		if(provider != null && !provider.isNew()) {
-			values.put("provider_id", provider.getId());  
-		}
-		
-		Category category = beverage.getCategory();
-		if(category != null && !category.isNew()) {
-			values.put("category_id", category.getId());  
-		}
-
-		values.put("name", beverage.getName());  
-		values.put("no", beverage.getNo());  
-		values.put("thumb", beverage.getThumb());
-		values.put("year", beverage.getYear());  
-		values.put("type", beverage.getBeverageTypeId());  
-		values.put("strength", beverage.getStrength());  
-		values.put("price", beverage.getPrice());  
-		values.put("usage", beverage.getUsage());  
-		values.put("taste", beverage.getTaste());  
-		values.put("rating", beverage.getRating()); 
-		values.put("comment", beverage.getComment()); 
-		
-		return values;
-	}
-
 	private boolean inCellar(int id) {
 		SQLiteDatabase db = getReadableDatabase();			
 		Cursor c = db.query(CELLAR_TABLE, new String[]{"beverage_id"}, "beverage_id = ?", new String[] {String.valueOf(id)}, null, null, null);
@@ -577,101 +851,4 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		}
 	}
 
-	public int getNextNotificationId() {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = null;
-		
-		try {
-			c = db.rawQuery("SELECT max(notification_id) as max FROM cellar", null);
-
-			if (c.moveToFirst()) {
-				return c.getInt(0)+1;
-			}
-
-			return -1;
-		} finally {
-			c.close();
-			db.close();
-			close();
-		}
-	}
-
-	// Stats
-	public double getCellarValue() {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = null;
-		
-		try {
-			c = db.rawQuery(BeverageDatabaseHelper.SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR, null);
-
-			double value = 0;
-			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
-				value += c.getDouble(12) * c.getInt(22);
-			}
-
-			return value;
-		} finally {
-			c.close();
-			db.close();
-			close();
-		}
-	}
-
-	public double getAverageRating() {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = null;
-		
-		try {
-			c = db.rawQuery("select avg(rating) from beverage where rating != -1", null);
-
-			if (c.moveToFirst()) {
-				return c.getDouble(0);
-			}
-		} finally {
-			c.close();
-			db.close();
-			close();
-		}
-		
-		return 0;
-	}
-
-	public int getAllBeveragesForType(BeverageType type) {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = null;
-		
-		try {
-			c = db.rawQuery("select count(_id) from beverage where type = ?", new String[]{String.valueOf(type.getId())});
-
-			if (c.moveToFirst()) {
-				return c.getInt(0);
-			}
-		} finally {
-			c.close();
-			db.close();
-			close();
-		}
-		
-		return 0;
-	}
-
-	public List<Country> getCountries() {
-		List<Country> l = new ArrayList<Country>();
-		SQLiteDatabase db = getReadableDatabase();
-		
-		try {
-			Cursor c = db.rawQuery("select * from " + COUNTRY_TABLE, null);
-			
-			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
-				l.add(getCountryFromCursor(c));
-			}
-
-			return l;
-		} finally {
-			db.close();
-		}
-	}
-
-	// End Stats
-	
 }

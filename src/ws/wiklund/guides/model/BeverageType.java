@@ -1,26 +1,22 @@
 package ws.wiklund.guides.model;
 
-public class BeverageType {
+@TableName(name = "beverage_type")
+public class BeverageType extends BaseModel {
+	private static final long serialVersionUID = 4316915341600275071L;
+
 	public static final BeverageType OTHER = new BeverageType(999, "Övriga");
 	
-	private int id = -1;
-	private String name = null;
-	
 	public BeverageType(int id, String name) {
-		this.id = id;
-		this.name = name;
+		super(id, name);
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
+	public boolean isOther() {
+		return getId() == OTHER.getId();
 	}
 
 	@Override
 	public String toString() {
-		return name;
+		return getName();
 	}
+
 }
