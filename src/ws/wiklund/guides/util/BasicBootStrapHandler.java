@@ -21,7 +21,7 @@ public class BasicBootStrapHandler {
 	public static void init(Context context, String preferenceKey) {
 		initVersions(context, preferenceKey);
 		
-		AppRater.app_launched(context, context.getString(R.string.app_name), context.getString(R.string.play_url));
+		AppRater.appLaunched(context, context.getString(R.string.app_name), context.getString(R.string.play_url));
 	}
 	
 	public static boolean runOnce(Context context, String key) {

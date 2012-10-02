@@ -16,7 +16,7 @@ public class AppRater {
     private final static int DAYS_UNTIL_PROMPT = 3;
     private final static int LAUNCHES_UNTIL_PROMPT = 7;
     
-    public static void app_launched(Context context, String appName, String uri) {
+    public static void appLaunched(Context context, String appName, String uri) {
         SharedPreferences prefs = context.getSharedPreferences("apprater", 0);
         if (!prefs.getBoolean("dontshowagain", false)) {
             SharedPreferences.Editor editor = prefs.edit();
