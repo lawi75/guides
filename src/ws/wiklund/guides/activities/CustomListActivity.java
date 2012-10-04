@@ -100,7 +100,6 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
 		cursorAdapter.getCursor().requery();
 	}
 	
-
 	@Override
 	protected void onStart() {
     	super.onStart();

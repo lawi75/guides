@@ -39,6 +39,7 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 	@Override
 	protected Beverage doInBackground(String... no) {
 		this.no = no[0];
+		dialog.setMessage(String.format(activity.getString(R.string.systembolaget_wait_msg), new Object[]{this.no}));
 
 		try {
 			if(this.no == null) {
@@ -78,7 +79,6 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 	protected void onPreExecute() {
 		dialog = new ProgressDialog(activity, R.style.CustomDialog);
 		dialog.setTitle(activity.getString(R.string.wait));
-		dialog.setMessage(String.format(activity.getString(R.string.systembolaget_wait_msg), new Object[]{no}));
 		dialog.setIndeterminate(true);
 		dialog.setCancelable(false);
 		dialog.show();

@@ -63,11 +63,11 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 			Beverage b = getBeverageFromUI();
 			if(ViewHelper.validateBeverage(this, b)) {
 				saveBeverage(getDatabaseHelper(), b);
-				showBeerList();					
+				showBeverageList();					
 			}
 			return true;
 		} else if (item.getItemId() == R.id.menuCancel) {
-			showBeerList();
+			showBeverageList();
 			return true;
 		}
 		
@@ -187,12 +187,12 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		}
 	}
 
-	private void showBeerList() {
-    	startActivityForResult(new Intent(getApplicationContext(), FullAdActivity.class), 0);
+	private void showBeverageList() {
+    	startActivityForResult(new Intent(getApplicationContext(), getIntentClass()), 0);
     	finish();
 	}
 
-    private Beverage getBeverageFromUI() {
+	private Beverage getBeverageFromUI() {
     	String name = ((EditText) findViewById(R.id.Edit_name)).getText().toString();		
     	BeverageType type = (BeverageType) ((Spinner) findViewById(R.id.Spinner_type)).getSelectedItem();
 		String country = ((EditText) findViewById(R.id.Edit_country)).getText().toString();
@@ -275,5 +275,6 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 	}
 	
 	protected abstract BeverageDatabaseHelper getDatabaseHelper();
+	protected abstract Class<?> getIntentClass();
 
 }

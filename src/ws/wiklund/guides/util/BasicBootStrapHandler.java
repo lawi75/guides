@@ -65,7 +65,7 @@ public class BasicBootStrapHandler {
         View view = inflater.inflate(R.layout.whatsnew, null);
         
         LinearLayout layoutView = (LinearLayout) view.findViewById(R.id.layout);
-        LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         
         String[] headers = context.getString(R.string.versionHeads).split("£");
         String[] messages = context.getString(R.string.versionMessages).split("£");

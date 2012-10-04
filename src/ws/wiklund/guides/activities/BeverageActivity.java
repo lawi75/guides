@@ -9,7 +9,6 @@ import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
 import ws.wiklund.guides.model.Rating;
-import ws.wiklund.guides.util.FacebookPostMessageTask;
 import ws.wiklund.guides.util.ViewHelper;
 import ws.wiklund.guides.util.facebook.FacebookConnector;
 import ws.wiklund.guides.util.facebook.SessionEvents;
@@ -23,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -40,7 +38,7 @@ public abstract class BeverageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.beverage);
         
-		connector = new FacebookConnector(getString(R.string.facebookAppId), this, getApplicationContext(), new String[] {"publish_stream", "read_stream", "offline_access"});
+		connector = new FacebookConnector(this);
 		
         beverage = (Beverage) getIntent().getSerializableExtra("ws.wiklund.guides.model.Beverage");
 		Log.d(BeverageActivity.class.getName(), "Beverage: " + beverage);
@@ -71,25 +69,32 @@ public abstract class BeverageActivity extends BaseActivity {
 				populateUI();
 			}
 		}
+		
+		connector.getFacebook().extendAccessTokenIfNeeded(this, null);
 
 		super.onResume();
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		connector.getFacebook().authorizeCallback(requestCode, resultCode, data);
+	}	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menuShareOnFacebook) {
-			final FacebookPostMessageTask task = new FacebookPostMessageTask(BeverageActivity.this, connector, beverage, getString(R.string.recommend_header));
 			if (connector.getFacebook().isSessionValid()) {
-				task.execute();
+				connector.postMessageOnWall(beverage);
 			} else {
 				SessionEvents.addAuthListener(new SessionEvents.AuthListener() {
 					@Override
 					public void onAuthSucceed() {
-						task.execute();
+						connector.postMessageOnWall(beverage);
 					}
 					
 					@Override
 					public void onAuthFail(String error) {
+						Log.d(BeverageActivity.class.getName(), "FacebookPostMessageTask onAuthFail: " + error);
 					}
 				});
 
@@ -98,7 +103,6 @@ public abstract class BeverageActivity extends BaseActivity {
 			return true;
 		} else if (item.getItemId() == R.id.menuRateBeverage) {
 			final Dialog viewDialog = new Dialog(this);
-			viewDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 			viewDialog.setTitle(R.string.rate);
 			LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View dialogView = li.inflate(R.layout.rating, null);
