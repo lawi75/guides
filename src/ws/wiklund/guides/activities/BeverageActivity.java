@@ -78,6 +78,8 @@ public abstract class BeverageActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		connector.getFacebook().authorizeCallback(requestCode, resultCode, data);
+		
+		super.onActivityResult(requestCode, resultCode, data);
 	}	
 
 	@Override
@@ -136,7 +138,7 @@ public abstract class BeverageActivity extends BaseActivity {
 		} else if (item.getItemId() == R.id.menuUpdateBeverage) {
 			Intent intent = new Intent(getApplicationContext(), getModifyBeverageActivityClass());
 			intent.putExtra("ws.wiklund.guides.model.Beverage", beverage);
-			startActivityForResult(intent, 0);
+			startActivity(intent);
 			return true;
 		}
 		

@@ -44,7 +44,7 @@ public class SystembolagetParser {
 				price = e.first().nextElementSibling();
 			}
 			
-			Beverage beverage = new Beverage(productName.text());
+			Beverage beverage = new Beverage(productName != null ? productName.text() : null);
 			beverage.setNo(Integer.valueOf(no));
 			
 			if(useSubTypes) {

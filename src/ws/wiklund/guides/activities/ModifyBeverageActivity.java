@@ -263,7 +263,7 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		if(beverage != null && provider.length() > 0) {
 			Producer p = beverage.getProducer();
 			
-			if(p == null || (!p.getName().equals(provider))) {
+			if(p == null || p.getName() == null || (!p.getName().equals(provider))) {
 				beverage.setProvider(new Provider(provider));
 			}
 		}
