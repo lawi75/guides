@@ -5,6 +5,7 @@ import java.util.Date;
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
+import ws.wiklund.guides.model.Category;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
@@ -215,6 +216,17 @@ public abstract class BeverageActivity extends BaseActivity {
 			ViewHelper.setText(provider, p1.getName());
 		}
 
+		TextView category = (TextView) findViewById(R.id.Text_category);
+		Category cat = beverage.getCategory();
+		if(cat != null) {
+			category.setText(cat.getName());
+		} else {
+			TextView categorylbl = (TextView) findViewById(R.id.Text_category_lbl);
+
+			categorylbl.setVisibility(View.GONE);
+			category.setVisibility(View.GONE);
+		}
+		
 		TextView comment = (TextView) findViewById(R.id.Text_comment);
 		ViewHelper.setText(comment, beverage.getComment());
 		

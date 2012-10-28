@@ -720,8 +720,14 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 				beverage.setCategory(new Category(id, category.getName()));
 			}
 			
+
 			ContentValues values = beverage.getAsContentValues();
-						
+			
+			int categoryId = values.getAsInteger("category_id");
+			if(categoryId == Category.EMPTY_ID) {
+				values.put("category_id", -1);	
+			}
+			
 			db.update(BEVERAGE_TABLE, values, "_id=?", new String[]{String.valueOf(beverage.getId())});
 
 			db.setTransactionSuccessful();

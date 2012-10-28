@@ -6,6 +6,7 @@ import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
 import ws.wiklund.guides.model.Beverage;
 import ws.wiklund.guides.model.BeverageType;
+import ws.wiklund.guides.model.Category;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
@@ -28,7 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public abstract class ModifyBeverageActivity extends BaseActivity {
-	private Beverage beverage;
+	protected Beverage beverage;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,8 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		String provider = ((EditText) findViewById(R.id.Edit_provider)).getText().toString();
 		String comment = ((EditText) findViewById(R.id.Edit_comment)).getText().toString();
 		
+		Category category = (Category) ((Spinner) findViewById(R.id.Spinner_category)).getSelectedItem();
+		//TODO handle removal of cat for wine
 		if(beverage == null) {
 			beverage = new Beverage();
 
@@ -231,6 +234,7 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		
 		beverage.setUsage(usage);
 		beverage.setTaste(taste);
+		beverage.setCategory(category);
 		beverage.setComment(comment);
 		updateCountry(country);
 		updateProducer(producer);

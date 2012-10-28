@@ -47,7 +47,7 @@ public class ViewHelper {
 
 	private final static DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
 	private final static DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
-	private final static DecimalFormat decimalFormat = new DecimalFormat("#.#");
+	private final static DecimalFormat decimalFormat = new DecimalFormat("0.0");
 	private final static DecimalFormat currencyFormat = new java.text.DecimalFormat("SEK 0.00");
 	private final static String urlp3Api = "?chf=bg,s,65432100&cht=p3&chs=400x150&chl=";
 	private final static List<String> strengths = new ArrayList<String>();
