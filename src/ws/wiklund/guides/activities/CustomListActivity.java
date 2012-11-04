@@ -108,11 +108,11 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
 	
 	@Override
 	protected void onDestroy() {
-		stopManagingCursor(cursorAdapter.getCursor());
-
 		if (cursorAdapter != null) {
 			Cursor c = cursorAdapter.getCursor();
+
 			if(c != null) {
+				stopManagingCursor(c);
 				c.close();
 			}
 		}
