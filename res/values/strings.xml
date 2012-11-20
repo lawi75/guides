@@ -25,6 +25,7 @@
     <string name="name_hint">Namn</string>
     <string name="country_hint">Land</string>
     <string name="systembolaget_wait_msg">Söker efter %1$s</string>
+    <string name="systembolaget_find_by_name_hint">Sök på namn</string>
     
     <!-- App rating -->
     <string name="rating">Betygsätt</string>
@@ -106,6 +107,7 @@
     <!-- Error Messages -->
     <string name="genericParseError">Misslyckades med att hämta information från www.systembolaget.se, var god försök igen</string>
     <string name="missingNoError">Nummer %1$s finns inte hos Systembolaget</string>
+    <string name="missingSearchWordError">Din sökningen på %1$s gav inga träffar på Systembolaget</string>
     <string name="invalidNoError">%1$s är inte ett giltigt nummer</string>
     
     <!-- Whats new -->

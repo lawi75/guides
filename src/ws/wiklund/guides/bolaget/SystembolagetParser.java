@@ -1,18 +1,23 @@
 package ws.wiklund.guides.bolaget;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import ws.wiklund.guides.util.ViewHelper;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
+import ws.wiklund.guides.model.Beverage;
+import ws.wiklund.guides.model.BeverageType;
 import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
-import ws.wiklund.guides.model.Beverage;
+import ws.wiklund.guides.util.SearchResult;
+import ws.wiklund.guides.util.ViewHelper;
 import android.util.Log;
 
 public class SystembolagetParser {
@@ -66,6 +71,61 @@ public class SystembolagetParser {
 		}
 		
 		return null;
+	}
+	
+	public static SearchResult searchBeverages(String searchWord, BeverageDatabaseHelper helper) throws IOException {
+		Document doc = Jsoup.connect(BASE_URL + "/Sok-dryck/?searchquery=" + searchWord + "&sortfield=Default&sortdirection=Ascending&hitsoffset=0&page=1&searchview=All&groupfiltersheader=Default&filters=searchquery%2c").timeout(10*1000).get();
+
+		Element noHits = doc.select("h2.filtersHeader").first();
+		
+		int hits = 0;
+		if (noHits != null) {
+			hits = ViewHelper.getNoHitsFromString(noHits.text());
+		}
+		
+		Elements result = doc.select("tbody > tr");
+		
+		if (result != null) {
+			return new SearchResult(hits, getBeveragesFromSearchResult(result.iterator(), helper));
+		}
+		
+		return new SearchResult();
+	}
+
+	private static List<Beverage> getBeveragesFromSearchResult(Iterator<Element> result, BeverageDatabaseHelper helper) {
+		List<Beverage> beverages = new ArrayList<Beverage>();
+		
+		while(result.hasNext()) {
+			Element e = result.next();
+			
+			String type = e.select("td.col1").first().text();
+			BeverageType beverageType = helper.getBeverageTypeFromName(type);
+			
+			if(!beverageType.isOther()) {
+				Beverage b = new Beverage();
+				b.setBeverageType(beverageType);
+				
+				Element col0 = e.select("td.col0").first();
+
+				String no = col0.select("a").first().attr("varunr");
+				String name = col0.select("a > strong").first().text();
+				
+				String country = e.select("td.col3").first().text();
+				String price = e.select("td.col5").first().text();
+				
+				b.setNo(Integer.valueOf(no));
+				b.setName(name);
+				
+				Country c = new Country(country, null);
+				b.setCountry(c);
+				
+				b.setPrice(Double.valueOf(ViewHelper.getDoubleFromDecimalString(price)));
+				
+				beverages.add(b);
+			}
+		}
+		
+		return beverages;
 	}
 
 	private static void updatePrice(Beverage beverage, Element price) {

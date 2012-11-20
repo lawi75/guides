@@ -10,5 +10,6 @@ public class ViewHolder {
     public TextView titleView;  
     public TextView textView; 
     public TextView typeView;
+    public TextView priceView;
 
 }

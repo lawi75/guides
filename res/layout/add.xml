@@ -48,7 +48,30 @@
 			android:onClick="searchWine" />
 	</TableRow>
 	
-	<TableRow
+    <TableRow
+		android:id="@+id/TableRowFindBeverageByName"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+		
+		<EditText 
+			android:id="@+id/EditFindByName"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"	
+			android:singleLine="true"
+    		android:hint="@string/systembolaget_find_by_name_hint"/>
+		 
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+	        android:layout_marginTop="5dip"
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"
+			android:src="@drawable/next"
+			android:background="@drawable/custom_button2"			
+			android:onClick="searchWineByName" />
+	</TableRow>
+    
+    <TableRow
 		android:id="@+id/TableRowAddBeverageManually"
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent">

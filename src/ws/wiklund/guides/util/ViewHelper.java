@@ -357,5 +357,15 @@ public class ViewHelper {
 		
 		return false;
 	}
+
+	public static int getNoHitsFromString(String str) {
+		int idx1 = str.indexOf("(");
+		int idx2 = str.lastIndexOf(" trä");
+		if(idx1 != -1) {
+			return Integer.valueOf(str.substring(idx1 + 1, idx2));
+		}
+		
+		return -1;
+	}
 	
 }
