@@ -25,6 +25,8 @@ public class Beverage extends BaseModel {
 	private Category category;
 	private int bottlesInCellar;
 
+	private String image;
+
 	public Beverage() {
 		this(null);
 	}
@@ -34,7 +36,7 @@ public class Beverage extends BaseModel {
 	}
 
 	public Beverage(int id, String name, int no, BeverageType beverageType, String thumb,
-			Country country, int year, Producer producer, double strength, double price,
+			String image, Country country, int year, Producer producer, double strength, double price,
 			String usage, String taste, Provider provider, float rating, String comment, 
 			Category category, Date added, int bottlesInCellar) {
 		super(id, name);
@@ -48,6 +50,7 @@ public class Beverage extends BaseModel {
 		}
 		
 		this.thumb = thumb;
+		this.image = image;
 		this.country = country;
 		this.year = year;
 		this.producer = producer;
@@ -82,9 +85,29 @@ public class Beverage extends BaseModel {
 	public String getThumb() {
 		return thumb;
 	}
+	
+	public boolean isCustomThumb() {
+		return !thumb.startsWith("/");
+	}
 
 	public void setThumb(String thumb) {
 		this.thumb = thumb;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
+	public boolean hasImage() {
+		return image != null;
+	}
+
+	public boolean isFullSizeImageAvailable() {
+		return !thumb.contains("bild_saknas");
 	}
 
 	public Country getCountry() {
@@ -221,6 +244,7 @@ public class Beverage extends BaseModel {
 		values.put("name", getName());  
 		values.put("no", no);  
 		values.put("thumb", thumb);
+		values.put("image", image);
 		values.put("year", year);  
 		values.put("beverage_type_id", beverageType.getId());  
 		values.put("strength", strength);  
@@ -300,6 +324,11 @@ public class Beverage extends BaseModel {
 				return false;
 		} else if (!thumb.equals(other.thumb))
 			return false;
+		if (image == null) {
+			if (other.image != null)
+				return false;
+		} else if (!image.equals(other.image))
+			return false;
 		if (usage == null) {
 			if (other.usage != null)
 				return false;
@@ -314,7 +343,8 @@ public class Beverage extends BaseModel {
 	public String toString() {
 		return "Beverage [getId()=" + getId() + ", getName()=" + getName()
 				+ ", no=" + no + ", beverageType=" + beverageType
-				+ ", thumb=" + thumb + ", country=" + country + ", year="
+				+ ", thumb=" + thumb + ", iamge=" + image
+				+ ", country=" + country + ", year="
 				+ year + ", producer=" + producer + ", strength=" + strength
 				+ ", price=" + price + ", usage=" + usage + ", taste=" + taste
 				+ ", provider=" + provider + ", rating=" + rating + ", added="

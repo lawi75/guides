@@ -40,6 +40,10 @@ public abstract class DatabaseUpgrader {
         
 		db.update(BeverageDatabaseHelper.BEVERAGE_TABLE, values, "type=?", new String[]{String.valueOf(currentId)});
 	}
-
+	
+	protected void insertImageColumnToBeverage() {
+		//Create image column in BEVERAGE table
+		db.execSQL("ALTER TABLE beverage ADD COLUMN image text");
+	}
 	
 }

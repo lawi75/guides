@@ -202,20 +202,20 @@ public class ViewHelper {
 				c.getInt(2),
 				new BeverageType(c.getInt(3), c.getString(4)),
 				c.getString(5),
-				new Country(c.getInt(6), c.getString(7), c.getString(8)),
-				c.getInt(9),
-				new Producer(c.getInt(10), c.getString(11)),
-				c.getFloat(12),
+				c.getString(6),
+				new Country(c.getInt(7), c.getString(8), c.getString(9)),
+				c.getInt(10),
+				new Producer(c.getInt(11), c.getString(12)),
 				c.getFloat(13),
-				c.getString(14),
+				c.getFloat(14),
 				c.getString(15),
-				new Provider(c.getInt(16), c.getString(17)),
-				c.getFloat(18),
-				c.getString(19),
-				isValidCategory(c) ? new Category(c.getInt(20), c.getString(21)) : null,
-				new Date(c.getLong(22)),
-				c.getInt(23));
-
+				c.getString(16),
+				new Provider(c.getInt(17), c.getString(18)),
+				c.getFloat(19),
+				c.getString(20),
+				isValidCategory(c) ? new Category(c.getInt(21), c.getString(22)) : null,
+				new Date(c.getLong(23)),
+				c.getInt(24));
 	}
 	
 	public static Cellar getCellarFromCursor(Cursor c) {
@@ -282,7 +282,7 @@ public class ViewHelper {
 
 			String u = b.getThumb();			
 			if (u != null) {
-				String url = u.startsWith("/") ? SystembolagetParser.BASE_URL + u : u;
+				String url = b.isCustomThumb() ? u : SystembolagetParser.BASE_URL + u;
 				holder.imageView.setTag(url);
 				BitmapManager.INSTANCE.loadBitmap(url, holder.imageView, 50, 100);
 			} else {
@@ -351,8 +351,8 @@ public class ViewHelper {
 	}
 	
 	private static boolean isValidCategory(Cursor c) {
-		if(!c.isNull(20)) {			
-			return c.getInt(20) > 0;
+		if(!c.isNull(21)) {			
+			return c.getInt(21) > 0;
 		}
 		
 		return false;

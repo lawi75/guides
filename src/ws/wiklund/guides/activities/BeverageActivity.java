@@ -1,6 +1,7 @@
 package ws.wiklund.guides.activities;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
@@ -10,12 +11,16 @@ import ws.wiklund.guides.model.Country;
 import ws.wiklund.guides.model.Producer;
 import ws.wiklund.guides.model.Provider;
 import ws.wiklund.guides.model.Rating;
+import ws.wiklund.guides.util.DownloadBeverageTask;
 import ws.wiklund.guides.util.ViewHelper;
 import ws.wiklund.guides.util.facebook.FacebookConnector;
 import ws.wiklund.guides.util.facebook.SessionEvents;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +33,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public abstract class BeverageActivity extends BaseActivity {
 	private FacebookConnector connector;
@@ -149,7 +155,54 @@ public abstract class BeverageActivity extends BaseActivity {
 	private void populateUI() {
 		setTitle(beverage.getName());
 		
-		ViewHelper.setThumbFromUrl((ImageView) findViewById(R.id.Image_thumbUrl), beverage.getThumb());
+		ImageView thumb = (ImageView) findViewById(R.id.Image_thumbUrl);
+		ViewHelper.setThumbFromUrl(thumb, beverage.getThumb());
+		
+		thumb.setOnClickListener(new OnClickListener() {		
+			@Override
+			public void onClick(View view) {
+				if(!beverage.hasImage()) {
+					if (beverage.isFullSizeImageAvailable()) {
+						AlertDialog.Builder loadImageDialog = new AlertDialog.Builder(BeverageActivity.this);
+						loadImageDialog.setTitle(R.string.fullSizeImageDialogTitle);
+						loadImageDialog.setMessage(R.string.fullSizeImageDiaolgMessag);
+						loadImageDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+
+								AsyncTask<String, Void, Beverage> a = new DownloadBeverageTask(
+										getDatabaseHelper(), false, BeverageActivity.this, FullSizeImageActivity.class).execute(String.valueOf(beverage.getNo()));;
+
+								try {
+									Beverage b = a.get();
+									if (b != null) {
+										beverage.setImage(b.getImage());
+										getDatabaseHelper().updateBeverage(beverage);
+									}
+								} catch (InterruptedException e) {
+									Log.d(BeverageActivity.class.getName(), "Failed to persist full size image url: " + e);
+								} catch (ExecutionException e) {
+									Log.d(BeverageActivity.class.getName(), "Failed to persist full size image url: " + e);
+								}
+							}
+						});
+						loadImageDialog.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						});
+						loadImageDialog.show();
+					} else {
+						 Toast.makeText(BeverageActivity.this, String.format(getString(R.string.noImageAvailable), new Object[]{beverage.getName()}), Toast.LENGTH_SHORT).show();  		
+					}
+				} else {
+					Intent intent = new Intent(BeverageActivity.this, FullSizeImageActivity.class);
+					intent.putExtra("ws.wiklund.guides.model.Beverage", beverage);
+					startActivity(intent);
+				}
+			}
+		});
+		
 		
 		if (beverage.getNo() != -1) {
 			TextView no = (TextView) findViewById(R.id.Text_no);

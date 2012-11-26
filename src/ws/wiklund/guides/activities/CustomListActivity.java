@@ -13,6 +13,7 @@ import ws.wiklund.guides.util.ViewHelper;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,8 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
 public abstract class CustomListActivity extends ListActivity implements Notifyable {
+	private static final String SORT_COLUMN = "sort_column";
+
 	protected List<Sortable> sortableItems;
 
 	protected String currentSortColumn = "beverage.name asc";
@@ -58,7 +61,13 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
         		R.drawable.icon, 
         		"beverage_type.name"));
         
-		sortableAdapter = new SortableAdapter(this, R.layout.spinner_row, sortableItems, getLayoutInflater());
+        sortableItems.add(new Sortable(
+        		getString(R.string.sortOnAmountInCellar), 
+        		getString(R.string.sortOnAmountInCellarSub), 
+        		R.drawable.amount, 
+        		"total"));
+
+        sortableAdapter = new SortableAdapter(this, R.layout.spinner_row, sortableItems, getLayoutInflater());
 		
 		selectableAdapter = new SelectableAdapter(this, R.layout.spinner_row, getLayoutInflater()){
 			public boolean isAvailableInCellar() {
@@ -67,6 +76,9 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
 			}
 		};
 		
+        SharedPreferences prefs = getSharedPreferences(SORT_COLUMN, 0);
+        currentSortColumn = prefs.getString("sortColumn", "beverage.name asc");
+        
 		addSelectables();
 	}
 	
@@ -170,6 +182,13 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
 		cursorAdapter.changeCursor(getNewCursor(currentSortColumn));
 
 		cursorAdapter.getCursor().requery();
+		
+		//Persist sort column
+        SharedPreferences prefs = getSharedPreferences(SORT_COLUMN, 0);
+        SharedPreferences.Editor editor = prefs.edit();
+            
+        editor.putString("sortColumn", currentSortColumn);
+        editor.commit();
 	}
 
 	protected abstract void select(Selectable selectable, int position);

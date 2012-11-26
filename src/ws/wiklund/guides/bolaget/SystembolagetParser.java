@@ -42,6 +42,7 @@ public class SystembolagetParser {
 			Element typeIncludingSubType = doc.select("span.character").first();
 			Element country = doc.select("div.country > img").first();
 			Element thumb = doc.select("div.image > img").first();
+			Element fullSize = doc.select("a.enlarge").first();
 			
 			Elements e = doc.select("td:contains(Pris)");
 			Element price = null;
@@ -60,6 +61,10 @@ public class SystembolagetParser {
 
 			beverage.setCountry(new Country(country.attr("alt"),country.attr("src")));
 			beverage.setThumb(thumb.attr("src"));
+			
+			if(beverage.isFullSizeImageAvailable()) {
+				beverage.setImage(fullSize.attr("href"));
+			}
 			
 			if (price != null) {
 				updatePrice(beverage, price);

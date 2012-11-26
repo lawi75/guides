@@ -55,7 +55,10 @@ public class FacebookConnector {
 	
 	public void postMessageOnWall(Beverage beverage) {
 		Bundle bundle = new Bundle();
-		bundle.putString("picture", SystembolagetParser.BASE_URL + beverage.getThumb());
+		if (!beverage.isCustomThumb()) {
+			bundle.putString("picture", SystembolagetParser.BASE_URL + beverage.getThumb());
+		}
+		
 		bundle.putString("name", activity.getString(R.string.recommend_header));
 		bundle.putString("link", SystembolagetParser.BASE_URL + "/" + beverage.getNo());
 		

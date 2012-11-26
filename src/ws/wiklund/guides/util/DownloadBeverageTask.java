@@ -65,7 +65,7 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 			Log.d(DownloadBeverageTask.class.getName(), "Got beverage after " + (System.currentTimeMillis() - startRead) + " milli secs");
 			
 			intent.putExtra("ws.wiklund.guides.model.Beverage", beverage);
-			activity.startActivityForResult(intent, 0);
+			activity.startActivity(intent);
 		} else {
 			Toast.makeText(activity, errorMsg == null ? String.format(activity.getString(R.string.missingNoError), this.no) : errorMsg, Toast.LENGTH_SHORT).show();
 			errorMsg = null;

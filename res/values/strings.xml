@@ -18,6 +18,9 @@
     <string name="sortOnNameSub">Sortera på namn</string>
     <string name="sortOnRankSub">Sortera på Betyg</string>
     <string name="sortOnTypeSub" />
+    <string name="sortOnAmountInCellar">Antal</string>
+    <string name="sortOnAmountInCellarSub">Sortera på antal i källaren</string>
+    
     
     <!-- Add / Modify -->
     <string name="systembolaget_no_hint">Systembolaget nr</string>
@@ -81,6 +84,8 @@
     <string name="comment_hint">Kommentar</string>    
     <string name="bottles_in_cellar">%1$s flaskor i källaren till ett värde av %2$s</string>
     <string name="rate">Betyg</string>
+    <string name="fullSizeImageDialogTitle">Lägga till stor bild?</string>
+    <string name="fullSizeImageDiaolgMessag">Vill du lägga till stor bild till denna dryck?</string>
     
     <!-- Beverage menu -->
     <string name="share_on_facebook">Dela</string>
@@ -109,6 +114,7 @@
     <string name="missingNoError">Nummer %1$s finns inte hos Systembolaget</string>
     <string name="missingSearchWordError">Din sökningen på %1$s gav inga träffar på Systembolaget</string>
     <string name="invalidNoError">%1$s är inte ett giltigt nummer</string>
+    <string name="noImageAvailable">Det finns ingen bild för %1$s på www.systembolaget.se</string>
     
     <!-- Whats new -->
     <string name="whatsnew">Nyheter</string>
