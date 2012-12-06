@@ -1,6 +1,7 @@
 package ws.wiklund.guides.db;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -42,8 +43,16 @@ public abstract class DatabaseUpgrader {
 	}
 	
 	protected void insertImageColumnToBeverage() {
-		//Create image column in BEVERAGE table
-		db.execSQL("ALTER TABLE beverage ADD COLUMN image text");
+		Cursor c = db.rawQuery("SELECT * FROM beverage LIMIT 0,1", null);
+		
+		int idx = c.getColumnIndex("image");
+		
+		if (idx == -1) {
+			//Create image column in BEVERAGE table if it doesn't exist
+			db.execSQL("ALTER TABLE beverage ADD COLUMN image text");
+		}
+		
+		c.close();
 	}
 	
 }
