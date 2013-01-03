@@ -17,7 +17,7 @@
 		ads:adSize="BANNER"
 		ads:loadAdOnCreate="false" />			 	    		    
     
-    <ListView 
+    <com.woozzu.android.widget.IndexableListView 
 		android:id="@android:id/list"
 		android:layout_width="fill_parent"
 		android:layout_height="0dip"

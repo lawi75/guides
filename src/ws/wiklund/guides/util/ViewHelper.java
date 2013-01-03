@@ -294,12 +294,17 @@ public class ViewHelper {
 	}
 	
 	public static void copyFile(File src, File dst) throws IOException {
-		FileChannel inChannel = new FileInputStream(src).getChannel();
-		FileChannel outChannel = new FileOutputStream(dst).getChannel();
+		FileInputStream in = new FileInputStream(src);
+		FileOutputStream out = new FileOutputStream(dst);
+		FileChannel inChannel = in.getChannel();
+		FileChannel outChannel = out.getChannel();
 		
 		try {
 			inChannel.transferTo(0, inChannel.size(), outChannel);
 		} finally {
+			in.close();
+			out.close();
+			
 			if (inChannel != null)
 				inChannel.close();
 			if (outChannel != null)
@@ -331,7 +336,7 @@ public class ViewHelper {
     	
     	Log.d(ViewHelper.class.getName(), "Got publisher id [" + id + "]");
     	
-    	if(id == null || id.isEmpty()) {
+    	if(id == null || id.length() == 0) {
         	View v1 = activity.findViewById(R.id.adView);
         	if(v1 != null) {
         		v1.setVisibility(View.GONE);

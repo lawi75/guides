@@ -1,12 +1,5 @@
 package ws.wiklund.guides.list;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.util.BitmapManager;
 import ws.wiklund.guides.util.ViewHelper;
@@ -19,15 +12,16 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 
+import com.woozzu.android.util.StringMatcher;
+
 public class BeverageListCursorAdapter extends SimpleCursorAdapter implements SectionIndexer {
 	private LayoutInflater inflator;
-	private Map<String, Integer> alphaIndexer;
-	private String[] sections;
+	private String sections;
 
 	public BeverageListCursorAdapter(Context context, Cursor c) {
 		super(context, R.layout.item, c, new String[] {"thumb", "name", "country_id", "year", "rating"}, new int[] {android.R.id.icon, android.R.id.text1});
 
-		alphaIndexer = new HashMap<String, Integer>();
+    	sections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		
 		inflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -40,18 +34,6 @@ public class BeverageListCursorAdapter extends SimpleCursorAdapter implements Se
 		
 		if (c.moveToPosition(position)) {
 			convertView = ViewHelper.getView(inflator, R.layout.item, convertView, c);
-
-			alphaIndexer.put(ViewHelper.getBeverageFromCursor(c).getName().substring(0,1).toUpperCase(), position);
-			
-			Set<String> sectionLetters = alphaIndexer.keySet();
-			 
-		    // create a list from the set to sort
-            List<String> sectionList = new ArrayList<String>(sectionLetters); 
-            Collections.sort(sectionList);
- 
-            sections = new String[sectionList.size()];
- 
-            sectionList.toArray(sections);
 		}
 
 			
@@ -60,17 +42,37 @@ public class BeverageListCursorAdapter extends SimpleCursorAdapter implements Se
 	
 	@Override
 	public int getPositionForSection(int section) {
-		return alphaIndexer.get(sections[section]);
+		// If there is no item for current section, previous section will be selected
+		for (int i = section; i >= 0; i--) {
+			for (int j = 0; j < getCount(); j++) {
+				Cursor c = (Cursor) getItem(j);
+				
+				if (i == 0) {
+					return 0;
+				} else {
+					if (StringMatcher.match(String.valueOf(ViewHelper.getBeverageFromCursor(c).getName().charAt(0)), String.valueOf(sections.charAt(i)))) {
+						return j;
+					}
+				}
+			}
+		}
+		
+		return 0;
 	}
 
 	@Override
 	public int getSectionForPosition(int position) {
-		return 1;
+		return 0;
 	}
 
 	@Override
 	public Object[] getSections() {
-		return sections;
+		String[] s = new String[sections.length()];
+		for (int i = 0; i < sections.length(); i++){
+			s[i] = String.valueOf(sections.charAt(i));
+		}
+		
+		return s;
 	}
 	
 }
