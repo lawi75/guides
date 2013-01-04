@@ -1,6 +1,7 @@
 package ws.wiklund.guides.activities;
 
 import java.util.Date;
+import java.util.List;
 
 import ws.wiklund.guides.R;
 import ws.wiklund.guides.db.BeverageDatabaseHelper;
@@ -154,7 +155,7 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		year.setAdapter(yearAdapter);
 
 		Spinner strength = (Spinner) findViewById(R.id.Spinner_strength);
-		ArrayAdapter<String> strengthAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, ViewHelper.getStrengths());
+		ArrayAdapter<String> strengthAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, getStrengths());
 		strength.setAdapter(strengthAdapter);
 	}
 
@@ -280,5 +281,6 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 	
 	protected abstract BeverageDatabaseHelper getDatabaseHelper();
 	protected abstract Class<?> getIntentClass();
+	protected abstract List<String> getStrengths();
 
 }

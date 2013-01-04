@@ -28,6 +28,7 @@ import android.util.Log;
 
 public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements Serializable {
 	private static final long serialVersionUID = 6561035045955612957L;
+	
 	// Database tables
 	private static final String COUNTRY_TABLE = "country";
 	private static final String PRODUCER_TABLE = "producer"; 
@@ -179,7 +180,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		super(context, dbName, null, dbVersion);
 		
 		/*if((context.getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-			debugSetDBVersion(1);
+			debugSetDBVersion(6);
 		}*/
 	}
 
@@ -306,7 +307,7 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		Cursor c = null;
 		
 		try {
-			c = db.rawQuery("select _id, name from " + BEVERAGE_TYPE_TABLE + " where name=?", new String[] {String.valueOf(name)});
+			c = db.rawQuery("select _id, name from " + BEVERAGE_TYPE_TABLE + " where name like ?", new String[] {"%" + name + "%"});
 
 			if (c.moveToFirst()) {
 				return getBeverageTypeFromCursor(c);
@@ -618,9 +619,10 @@ public abstract class BeverageDatabaseHelper extends SQLiteOpenHelper implements
 		try {
 			c = db.rawQuery(BeverageDatabaseHelper.SQL_SELECT_ALL_BEVERAGES_INCLUDING_NO_IN_CELLAR, null);
 
+			
 			double value = 0;
 			for (boolean b = c.moveToFirst(); b; b = c.moveToNext()) {
-				value += c.getDouble(13) * c.getInt(23);
+				value += c.getDouble(14) * c.getInt(24);
 			}
 
 			return value;

@@ -54,7 +54,7 @@ public class SystembolagetParser {
 			beverage.setNo(Integer.valueOf(no));
 			
 			if(useSubTypes) {
-				beverage.setBeverageType(helper.getBeverageTypeFromName(typeIncludingSubType.text()));
+				beverage.setBeverageType(helper.getBeverageTypeFromName(typeIncludingSubType.text().split(",")[1]));
 			} else {
 				beverage.setBeverageType(helper.getBeverageTypeFromName(type.text()));	
 			}

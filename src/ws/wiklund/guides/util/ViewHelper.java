@@ -50,7 +50,6 @@ public class ViewHelper {
 	private final static DecimalFormat decimalFormat = new DecimalFormat("0.0");
 	private final static DecimalFormat currencyFormat = new java.text.DecimalFormat("SEK 0.00");
 	private final static String urlp3Api = "?chf=bg,s,65432100&cht=p3&chs=400x150&chl=";
-	private final static List<String> strengths = new ArrayList<String>();
 
 	private final static Calendar calendar = Calendar.getInstance();
 	private final static List<Integer> years = new ArrayList<Integer>();
@@ -109,16 +108,6 @@ public class ViewHelper {
 		return -1d;
 	}
 
-	public static synchronized List<String> getStrengths() {
-		if (strengths.isEmpty()) {
-			for (Double i = 10.0; i <= 25.0; i += 0.1) {
-				strengths.add(decimalFormat.format(i) + " %");
-			}
-		}
-		
-		return strengths;
-	}
-	
 	public static synchronized List<Integer> getYears() {
 		if(years.isEmpty()) {
 			for(int i = 1900; i<= calendar.get(Calendar.YEAR); i++) {
