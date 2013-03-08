@@ -248,7 +248,7 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		if(beverage != null && country.length() > 0) {
 			Country c = beverage.getCountry();
 			
-			if(c == null || (!c.getName().equals(country))) {
+			if(c == null || c.getName() == null || (!c.getName().equals(country))) {
 				beverage.setCountry(new Country(country, null));
 			}
 		}
@@ -258,7 +258,7 @@ public abstract class ModifyBeverageActivity extends BaseActivity {
 		if(beverage != null && producer.length() > 0) {
 			Producer p = beverage.getProducer();
 			
-			if(p == null || (!p.getName().equals(producer))) {
+			if(p == null || p.getName() == null || (!p.getName().equals(producer))) {
 				beverage.setProducer(new Producer(producer));
 			}
 		}

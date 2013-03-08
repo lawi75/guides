@@ -173,7 +173,7 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
 	}	
 
 	protected boolean hasSomeStats() {
-		return cursorAdapter.getCount() > 0;
+		return cursorAdapter != null && cursorAdapter.getCount() > 0;
 	}
 
 	protected void sort(Sortable sortable) {
