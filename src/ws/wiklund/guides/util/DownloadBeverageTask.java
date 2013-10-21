@@ -39,8 +39,9 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 	@Override
 	protected Beverage doInBackground(String... no) {
 		this.no = no[0];
-		dialog.setMessage(String.format(activity.getString(R.string.systembolaget_wait_msg), new Object[]{this.no}));
-
+		
+		publishProgress();
+		
 		try {
 			if(this.no == null) {
 	        	Log.w(DownloadBeverageTask.class.getName(), "Failed to get info for wine,  no is null");		        	
@@ -55,6 +56,12 @@ public class DownloadBeverageTask extends AsyncTask<String, Void, Beverage> {
 		}
 
         return null;
+	}
+	
+	@Override
+	protected void onProgressUpdate(Void... values) {
+		dialog.setMessage(String.format(activity.getString(R.string.systembolaget_wait_msg), new Object[]{this.no}));
+		super.onProgressUpdate(values);
 	}
 
 	@Override

@@ -191,6 +191,16 @@ public abstract class CustomListActivity extends ListActivity implements Notifya
         editor.commit();
 	}
 
+	protected String validateSortColumn(String sortColumn) {
+		for(Sortable s : sortableItems) {
+			if(s.getSortColumn().equals(sortColumn)){
+				return sortColumn;
+			}
+		}
+		
+		return "beverage.name asc";
+	}
+	
 	protected abstract void select(Selectable selectable, int position);
 	protected abstract void addSelectables();
 	protected abstract Cursor getNewCursor(String sortColumn);
