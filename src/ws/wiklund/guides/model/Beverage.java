@@ -87,7 +87,7 @@ public class Beverage extends BaseModel {
 	}
 	
 	public boolean isCustomThumb() {
-		return !thumb.startsWith("/");
+		return thumb != null && !thumb.startsWith("/");
 	}
 
 	public void setThumb(String thumb) {
@@ -107,7 +107,7 @@ public class Beverage extends BaseModel {
 	}
 
 	public boolean isFullSizeImageAvailable() {
-		return !thumb.contains("bild_saknas");
+		return thumb != null && !thumb.contains("bild_saknas");
 	}
 
 	public Country getCountry() {
